@@ -6,7 +6,7 @@ some compatibility for vim
 
 version 0.8.0
 
-C-F → move Side Bar
+C-F → move the side bar
 
 In The Side Bar
 
@@ -18,7 +18,7 @@ o → open the cursor file in the new window
 
 : → open bash
 
-\* → filter the directory by the result of inputed command
+\* → filter the files in the current directory by the result of inputed command
 
 / → search files
 
