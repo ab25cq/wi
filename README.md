@@ -8,6 +8,7 @@ C-F → move Side Bar
 
 In The Side Bar
 
+```
 enter → write the file of current window and open the cursor file
 x → execute command to the cursor file
 o → open the cursor file in the new window
@@ -19,4 +20,4 @@ C-l → reread the current directory
 n → next the searching files
 N → preve the searching files
 C-c, C-f → return the editor
-
+```
