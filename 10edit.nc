@@ -132,7 +132,7 @@ void deleteWord(ViWin* self, Vi* nvi) {
 void deleteForNextCharacter(ViWin* self) {
     self.pushUndo();
     
-    var key = self.getKey();
+    var key = self.getKey(false);
 
     wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
@@ -178,6 +178,43 @@ void joinLines(ViWin* self) {
 
     self.modifyOverCursorXValue();
 }
+
+void forwardToNextCharacter1(ViWin* self) {
+    var key = self.getKey(false);
+    
+    var line = self.texts.item(self.scroll+self.cursorY, null);
+    
+    var cursor_x = line.substring(self.cursorX, -1).index(xsprintf("%c", key).to_wstring(), -1);
+    
+    if(cursor_x != -1) {
+        self.cursorX += cursor_x;
+    }
+}
+
+void forwardToNextCharacter2(ViWin* self) {
+    var key = self.getKey(false);
+    
+    var line = self.texts.item(self.scroll+self.cursorY, null);
+    
+    var cursor_x = line.substring(self.cursorX, -1).index(xsprintf("%c", key).to_wstring(), -1);
+    
+    if(cursor_x != -1) {
+        self.cursorX += cursor_x - 1;
+    }
+}
+
+void backwardToNextCharacter(ViWin* self) {
+    var key = self.getKey(false);
+    
+    var line = self.texts.item(self.scroll+self.cursorY, null);
+    
+    var cursor_x = line.substring(0, self.cursorX).rindex(xsprintf("%c", key).to_wstring(), -1);
+    
+    if(cursor_x != -1) {
+        self.cursorX = cursor_x;
+    }
+}
+
 }
 
 impl Vi version 10
@@ -186,7 +223,7 @@ initialize() {
     inherit(self);
 
     self.events.replace('d', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case 'd':
@@ -211,7 +248,7 @@ initialize() {
     });
 
     self.events.replace('c', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case 'w':
@@ -256,6 +293,21 @@ initialize() {
         self.activeWin.writed = true;
 
         self.activeWin.saveInputedKey();
+    });
+    self.events.replace('f', lambda(Vi* self, int key) {
+        self.activeWin.forwardToNextCharacter1();
+
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('t', lambda(Vi* self, int key) {
+        self.activeWin.forwardToNextCharacter2();
+
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('F', lambda(Vi* self, int key) {
+        self.activeWin.backwardToNextCharacter();
+
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }
 }

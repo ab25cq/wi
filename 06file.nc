@@ -181,7 +181,7 @@ initialize() {
 
     self.events.replace('W'-'A'+1, lambda(Vi* self, int key) 
     {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case 'W'-'A'+1:

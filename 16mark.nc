@@ -96,7 +96,7 @@ initialize() {
 
     self.events.replace('m', lambda(Vi* self, int key) 
     {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
         
         self.activeWin.markAtCurrentPoint(key2);
     });
@@ -108,7 +108,7 @@ initialize() {
 
     self.events.replace('`', lambda(Vi* self, int key) 
     {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
         
         if(key2 == '`') {
             self.activeWin.returnBack();

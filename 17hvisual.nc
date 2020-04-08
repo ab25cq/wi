@@ -314,7 +314,7 @@ void deleteOnHorizonVisualMode(ViWin* self, Vi* nvi) {
 }
 
 void inputHorizonVisualMode(ViWin* self, Vi* nvi){
-    var key = self.getKey();
+    var key = self.getKey(false);
 
     switch(key) {
         case 'l':

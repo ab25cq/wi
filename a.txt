@@ -1,8 +1,8 @@
 bcccc
 efccc
-hiccc
-1111aaa    bbbcccddddeeefffggghhhiii23ccc
-1111aaabbbcccddddeeefffggghhhiii56ccc
+hicccaaaaaaaaa11111a
+1111aaaa    aaaa23ccc
+1111aaaxxx    bbbcccddddeeefffggghhhiii56ccc
 aaaaaaaaabbbcccddddeeefffggghhhiii789
 bbbaaaa
 aaaaaaaaaaaaaaacccbbb*

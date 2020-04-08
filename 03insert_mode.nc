@@ -335,7 +335,7 @@ void blinkBraceEnd(ViWin* self, wchar_t head, wchar_t tail, Vi* nvi) {
 
 void inputInsertMode(ViWin* self, Vi* nvi)
 {
-    var key = self.getKey();
+    var key = self.getKey(false);
     
     if(key == 3 || key == 27) {
         nvi.exitFromInsertMode();
@@ -370,7 +370,7 @@ void inputInsertMode(ViWin* self, Vi* nvi)
         int i;
         for(i = 1; i<size; i++)
         {
-            keys[i] = self.getKey();
+            keys[i] = self.getKey(false);
         }
         keys[i] = '\0';
 
@@ -437,7 +437,7 @@ void inputInsertMode(ViWin* self, Vi* nvi)
         }
     }
     else if(key == 'V'-'A'+1) {
-        var key2 = self.getKey();
+        var key2 = self.getKey(false);
         
         char str[2];
         

@@ -92,12 +92,12 @@ void view(ViWin* self, Vi* nvi) {
     //wrefresh(self.win);
 }
 
-int getKey(ViWin* self) {
+int getKey(ViWin* self, bool head) {
     return wgetch(self.win);        
 }
 
 void input(ViWin* self, Vi* nvi) {
-    var key = self.getKey();
+    var key = self.getKey(true);
 
     var event = nvi.events.item(key, null);
 
@@ -268,7 +268,7 @@ void restoreVisualMode(ViWin* self, Vi* nvi) {
 }
 
 void keyG(ViWin* self, Vi* nvi) {
-    var key2 = self.getKey();
+    var key2 = self.getKey(false);
 
     switch(key2) {
         case 'g':
@@ -413,7 +413,7 @@ initialize() {
     });
     self.events.replace('z', lambda(Vi* self, int key) 
     {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case 'z':
@@ -429,7 +429,7 @@ initialize() {
     });
     self.events.replace('Z', lambda(Vi* self, int key) 
     {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case 'Z':

@@ -25,7 +25,7 @@ initialize(int y, int x, int width, int height, Vi* vi) {
     self.runningMacro = null;
 }
 
-int getKey(ViWin* self) {
+int getKey(ViWin* self, bool head) {
     if(self.runningMacro) {
         if(self.runningMacroIndex1 >= self.runningMacro.length())
         {
@@ -47,7 +47,7 @@ int getKey(ViWin* self) {
                 self.runningMacroIndex1++;
                 self.runningMacroIndex2 = 0;
                 
-                return self.getKey();
+                return self.getKey(head);
             }
         }
     }
@@ -90,7 +90,7 @@ int getKey(ViWin* self) {
         
         int key = wgetch(self.win);
         
-        if(key >= '1' && key <= '9' && ((Vi*)self.vi).mode != kInsertMode) {
+        if(head && key >= '1' && key <= '9' && ((Vi*)self.vi).mode != kInsertMode) {
             int num = key - '0';
             
             key = wgetch(self.win);
@@ -178,7 +178,7 @@ void makeInputedKeyGVDeIndent(ViWin* self, Vi* nvi) {
 
 void recordMacro(ViWin* self) {
     if(self.recordingMacroKey == -1) {
-        int key = self.getKey();
+        int key = self.getKey(false);
         
         self.recordingMacroKey = key;
         self.recordingMacro = new vector<vector<int>*%>.initialize();
@@ -192,7 +192,7 @@ void recordMacro(ViWin* self) {
 }
 
 void runMacro(ViWin* self) {
-    int key = self.getKey();
+    int key = self.getKey(false);
     
     var macro_ = self.macro.at(key, null);
     

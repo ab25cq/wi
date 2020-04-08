@@ -188,7 +188,7 @@ void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
 
 void inputSearchlMode(ViWin* self, Vi* nvi)
 {
-    var key = self.getKey();
+    var key = self.getKey(false);
 
     switch(key) {
         case 27:

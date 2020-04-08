@@ -21,7 +21,7 @@ void commandModeView(ViWin* self, Vi* nvi) {
     //wrefresh(self.win);
 }
 void commandModeInput(ViWin* self, Vi* nvi) {
-    var key = self.getKey();
+    var key = self.getKey(false);
 
     switch(key) {
         case '\n':

@@ -372,7 +372,7 @@ initialize() {
     });
 
     self.events.replace('[', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case '[':
@@ -388,7 +388,7 @@ initialize() {
     });
 
     self.events.replace(']', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey();
+        var key2 = self.activeWin.getKey(false);
 
         switch(key2) {
             case ']':

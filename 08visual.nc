@@ -165,7 +165,7 @@ void makeInputedKeyGVDeIndent(ViWin* self, Vi* nvi) {
 }
 
 void inputVisualMode(ViWin* self, Vi* nvi){
-    var key = self.getKey();
+    var key = self.getKey(false);
 
     switch(key) {
         case 'l':

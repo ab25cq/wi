@@ -106,7 +106,7 @@ void deleteOnVerticalVisualMode(ViWin* self, Vi* nvi) {
 }
 
 void inertOnVerticalVisualMode(ViWin* self, Vi* nvi) {
-    var key = self.getKey();
+    var key = self.getKey(false);
     
     if(key == 3 || key == 27) {
         self.visualModeVerticalInserting = false;
@@ -178,7 +178,7 @@ void inputVerticalVisualMode(ViWin* self, Vi* nvi){
         self.inertOnVerticalVisualMode(nvi);
     }
     else {
-        var key = self.getKey();
+        var key = self.getKey(false);
     
         switch(key) {
             case 'l':

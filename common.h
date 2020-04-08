@@ -63,7 +63,7 @@ impl ViWin version 2
     void statusBarView(ViWin* self, Vi* nvi);
     void view(ViWin* self, Vi* nvi);
     void input(ViWin* self, Vi* nvi);
-    int getKey(ViWin* self);
+    int getKey(ViWin* self, bool head);
     void modifyOverCursorYValue(ViWin* self);
     void modifyUnderCursorYValue(ViWin* self);
     void modifyOverCursorXValue(ViWin* self);
@@ -378,7 +378,7 @@ struct ViWin version 14
 impl ViWin version 14
 {
     initialize(int y, int x, int width, int height, Vi* vi);
-    int getKey(ViWin* self);
+    int getKey(ViWin* self, bool head);
     void clearInputedKey(ViWin* self);
     void saveInputedKey(ViWin* self);
     void makeInputedKeyGVIndent(ViWin* self, Vi* nvi);
