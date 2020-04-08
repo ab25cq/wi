@@ -396,14 +396,17 @@ initialize() {
     self.events.replace('w', lambda(Vi* self, int key) 
     {
         self.activeWin.forwardWord();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('e', lambda(Vi* self, int key) 
     {
         self.activeWin.forwardWord();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('b', lambda(Vi* self, int key) 
     {
         self.activeWin.backwardWord();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }
 }

@@ -153,11 +153,13 @@ initialize() {
     self.events.replace('p', lambda(Vi* self, int key) 
     {
         self.activeWin.pasteAfterCursor(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 
     self.events.replace('P', lambda(Vi* self, int key) 
     {
         self.activeWin.pasteBeforeCursor(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }
 }

@@ -126,6 +126,12 @@ void clearInputedKey(ViWin* self) {
     self.inputedKeys.reset();
 }
 
+void saveInputedKeyOnTheMovingCursor(ViWin* self) {
+    if(self.recordingMacro) {
+        self.saveInputedKey();
+    }
+}
+
 void saveInputedKey(ViWin* self) {
     if(!self.autoInput && !self.pressedDot) {
         if(self.digitInput > 0) {

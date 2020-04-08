@@ -17,8 +17,7 @@ initialize(int y, int x, int width, int height, Vi* vi) {
         = new list<tuple3<int, int, int>*%>.initialize();
 }
 
-void textsView(ViWin* self, Vi* nvi)
-{
+void textsView(ViWin* self, Vi* nvi){
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
 
@@ -72,8 +71,7 @@ void textsView(ViWin* self, Vi* nvi)
         }
     }
 }
-void statusBarView(ViWin* self, Vi* nvi)
-{
+void statusBarView(ViWin* self, Vi* nvi){
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
 
@@ -108,8 +106,7 @@ void input(ViWin* self, Vi* nvi) {
     }
 }
 
-void modifyUnderCursorYValue(ViWin* self)
-{
+void modifyUnderCursorYValue(ViWin* self){
     if(self.cursorY < 0) {
         self.scroll += self.cursorY;
 
@@ -121,8 +118,7 @@ void modifyUnderCursorYValue(ViWin* self)
     }
 }
 
-void modifyOverCursorYValue(ViWin* self)
-{
+void modifyOverCursorYValue(ViWin* self){
     if(self.texts.length() == 0) {
         self.scroll = 0;
         self.cursorY = 0;
@@ -148,8 +144,7 @@ void modifyOverCursorYValue(ViWin* self)
     }
 }
 
-void modifyOverCursorXValue(ViWin* self)
-{
+void modifyOverCursorXValue(ViWin* self){
     if(self.texts.length() == 0) {
         self.scroll = 0;
         self.cursorY = 0;
@@ -171,8 +166,7 @@ void modifyOverCursorXValue(ViWin* self)
     }
 }
 
-void modifyUnderCursorXValue(ViWin* self)
-{
+void modifyUnderCursorXValue(ViWin* self){
     if(self.cursorX < 0) {
         self.cursorX = 0;
     }
@@ -299,8 +293,7 @@ void openFile(ViWin* self, char* file_name, int line_num) {
     /// implemented by the after layer
 }
 
-void saveReturnPoint(ViWin* self)
-{
+void saveReturnPoint(ViWin* self){
     var return_point = new tuple3<int,int,int>.initialize();
 
     return_point.v1 = self.cursorY;
@@ -310,6 +303,8 @@ void saveReturnPoint(ViWin* self)
     self.returnPoint = clone return_point;
     self.returnPointStack.push_back(clone return_point);
 }
+void saveInputedKeyOnTheMovingCursor(ViWin* self) {
+    /// inpelemeted after layer
 }
 
 impl Vi version 2 
@@ -344,62 +339,77 @@ initialize() {
     self.events.replace('l', lambda(Vi* self, int key) 
     {
         self.activeWin.forward();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace(KEY_RIGHT, lambda(Vi* self, int key) 
     {
         self.activeWin.forward();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('h', lambda(Vi* self, int key) 
     {
         self.activeWin.backward();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace(KEY_LEFT, lambda(Vi* self, int key) 
     {
         self.activeWin.backward();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('j', lambda(Vi* self, int key) 
     {
         self.activeWin.nextLine();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace(KEY_DOWN, lambda(Vi* self, int key) 
     {
         self.activeWin.nextLine();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('k', lambda(Vi* self, int key) 
     {
         self.activeWin.prevLine();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace(KEY_UP, lambda(Vi* self, int key) 
     {
         self.activeWin.prevLine();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('0', lambda(Vi* self, int key) 
     {
         self.activeWin.moveAtHead();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('$', lambda(Vi* self, int key) 
     {
         self.activeWin.moveAtTail();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('D'-'A'+1, lambda(Vi* self, int key) 
     {
         self.activeWin.halfScrollDown();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('U'-'A'+1, lambda(Vi* self, int key) 
     {
         self.activeWin.halfScrollUp();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('L'-'A'+1, lambda(Vi* self, int key) 
     {
         self.clearView();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('g', lambda(Vi* self, int key) 
     {
         self.activeWin.keyG(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('G', lambda(Vi* self, int key) 
     {
         self.activeWin.moveBottom();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('z', lambda(Vi* self, int key) 
     {
@@ -408,10 +418,12 @@ initialize() {
         switch(key2) {
             case 'z':
                 self.activeWin.centeringCursor();
+                self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
                 
             case '\n':
                 self.activeWin.topCursor();
+                self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
         }
     });

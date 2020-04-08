@@ -1,9 +1,9 @@
-bc
-ef
-hi
-aaabbbcccddddeeefffggghhhiii23
-aaabbbcccddddeeefffggghhhiii56
-aaabbbcccddddeeefffggghhhiii789
+bcccc
+efccc
+hiccc
+1111aaa    bbbcccddddeeefffggghhhiii23ccc
+1111aaabbbcccddddeeefffggghhhiii56ccc
+aaaaaaaaabbbcccddddeeefffggghhhiii789
 bbbaaaa
 aaaaaaaaaaaaaaacccbbb*
 aaaccc1

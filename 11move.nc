@@ -368,6 +368,7 @@ initialize() {
 
     self.events.replace('%', lambda(Vi* self, int key) {
         self.activeWin.gotoBraceEnd(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 
     self.events.replace('[', lambda(Vi* self, int key) {
@@ -376,10 +377,12 @@ initialize() {
         switch(key2) {
             case '[':
                 self.activeWin.gotoFunctionTop(self);
+                self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
 
             case 'm':
                 self.activeWin.gotoMethodTop(self);
+                self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
         }
     });
@@ -390,10 +393,12 @@ initialize() {
         switch(key2) {
             case ']':
                 self.activeWin.gotoFunctionBottom(self);
+                self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
 
             case ']':
                 self.activeWin.gotoMethodBottom(self);
+                self.activeWin.saveInputedKeyOnTheMovingCursor();
         }
     });
 }

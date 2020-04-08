@@ -247,18 +247,22 @@ initialize() {
     self.events.replace('n', lambda(Vi* self, int key) 
     {
         self.activeWin.search(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('N', lambda(Vi* self, int key) 
     {
         self.activeWin.searchReverse(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('*', lambda(Vi* self, int key) 
     {
         self.activeWin.searchWordOnCursor(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('#', lambda(Vi* self, int key) 
     {
         self.activeWin.searchWordOnCursorReverse(self);
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }
 }

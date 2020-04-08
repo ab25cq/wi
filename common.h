@@ -100,6 +100,7 @@ struct Vi version 2
 impl ViWin version 2
 {
     void openFile(ViWin* self, char* file_name, int line_num);
+    void saveInputedKeyOnTheMovingCursor(ViWin* self);
 }
 
 impl Vi version 2 
@@ -382,6 +383,7 @@ impl ViWin version 14
     void saveInputedKey(ViWin* self);
     void makeInputedKeyGVIndent(ViWin* self, Vi* nvi);
     void makeInputedKeyGVDeIndent(ViWin* self, Vi* nvi);
+    void saveInputedKeyOnTheMovingCursor(ViWin* self);
 }
 
 impl Vi version 14

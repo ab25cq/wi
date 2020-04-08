@@ -237,6 +237,7 @@ initialize() {
     self.events.replace('D', lambda(Vi* self, int key) {
         self.activeWin.deleteAfterCursor();
         self.activeWin.writed = true;
+        self.activeWin.saveInputedKey();
     });
     self.events.replace('x', lambda(Vi* self, int key) {
         self.activeWin.deleteCursorCharactor();
