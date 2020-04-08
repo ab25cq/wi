@@ -4,7 +4,7 @@ Double Window vi clone implemented by neo-c
 
 some compatibility for vim
 
-version 0.8.0
+version 0.8.1
 
 C-F → move the side bar
 

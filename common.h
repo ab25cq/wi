@@ -364,6 +364,13 @@ struct ViWin version 14
     int digitInput;
     int autoInputIndex;
     bool pressedDot;
+
+    map<int, vector<vector<int>*%>*%>*% macro;
+    int recordingMacroKey;
+    vector<vector<int>*%>*% recordingMacro;
+    vector<vector<int>*%>*% runningMacro;
+    int runningMacroIndex1;
+    int runningMacroIndex2;
 };
 
 

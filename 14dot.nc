@@ -17,9 +17,41 @@ initialize(int y, int x, int width, int height, Vi* vi) {
     self.autoInput = false;
     self.digitInput = 0;
     self.autoInputIndex = 0;
+    
+    self.macro = new map<int, vector<vector<int>*%>*%>.initialize();
+    self.recordingMacroKey = -1;
+    self.recordingMacro = null;
+    
+    self.runningMacro = null;
 }
 
 int getKey(ViWin* self) {
+    if(self.runningMacro) {
+        if(self.runningMacroIndex1 >= self.runningMacro.length())
+        {
+            self.runningMacro = null;
+            self.runningMacroIndex1 = 0;
+            self.runningMacroIndex2 = 0;
+        }
+        else {
+            var inputed_key_vec = self.runningMacro.item(self.runningMacroIndex1, null);
+            
+            if(self.runningMacroIndex2 < inputed_key_vec.length())
+            {
+                int inputed_key_vec2 = inputed_key_vec.item(self.runningMacroIndex2, -1);
+                self.runningMacroIndex2++;
+                
+                return inputed_key_vec2;
+            }
+            else {
+                self.runningMacroIndex1++;
+                self.runningMacroIndex2 = 0;
+                
+                return self.getKey();
+            }
+        }
+    }
+    
     if(self.autoInput && self.savedInputedKeys) 
     {
         if(self.autoInputIndex < self.savedInputedKeys.length()) {
@@ -58,7 +90,7 @@ int getKey(ViWin* self) {
         
         int key = wgetch(self.win);
         
-        if(key >= '0' && key <= '9' && ((Vi*)self.vi).mode != kInsertMode) {
+        if(key >= '1' && key <= '9' && ((Vi*)self.vi).mode != kInsertMode) {
             int num = key - '0';
             
             key = wgetch(self.win);
@@ -112,6 +144,10 @@ void saveInputedKey(ViWin* self) {
             self.savedInputedKeys = clone self.inputedKeys;
         }
     }
+    
+    if(self.recordingMacroKey != -1) {
+        self.recordingMacro.push_back(clone self.savedInputedKeys);
+    }
 }
 
 void makeInputedKeyGVIndent(ViWin* self, Vi* nvi) {
@@ -133,10 +169,38 @@ void makeInputedKeyGVDeIndent(ViWin* self, Vi* nvi) {
     
     self.saveInputedKey();
 }
+
+void recordMacro(ViWin* self) {
+    if(self.recordingMacroKey == -1) {
+        int key = self.getKey();
+        
+        self.recordingMacroKey = key;
+        self.recordingMacro = new vector<vector<int>*%>.initialize();
+    }
+    else {
+        self.macro.insert(self.recordingMacroKey, clone self.recordingMacro);
+        
+        self.recordingMacroKey = -1;
+        self.recordingMacro = null;
+    }
+}
+
+void runMacro(ViWin* self) {
+    int key = self.getKey();
+    
+    var macro_ = self.macro.at(key, null);
+    
+    if(macro_) {
+        self.runningMacro = clone macro_;
+        self.runningMacroIndex1 = 0;
+        self.runningMacroIndex2 = 0;
+    }
+}
 }
 
 impl Vi version 14
 {
+    
 initialize() {
     inherit(self);
 
@@ -144,6 +208,15 @@ initialize() {
     {
         self.activeWin.autoInput = true;
         self.activeWin.pressedDot = true;
+    });
+
+    self.events.replace('q', lambda(Vi* self, int key) 
+    {
+        self.activeWin.recordMacro();
+    });
+    self.events.replace('@', lambda(Vi* self, int key) 
+    {
+        self.activeWin.runMacro();
     });
 }
 }
