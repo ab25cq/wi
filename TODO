@@ -1,5 +1,4 @@
-V, C-v, dot
-dot
+C-t, ]]
 ------------------------------------------------------------
 :%s//
 ta, fa,dta, cta
@@ -11,3 +10,5 @@ insert mode C-v
 multiple visible lines at the cursor line
 /* on pressing %
 digit repeat
+V, C-v, dot
+dot

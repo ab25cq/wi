@@ -377,11 +377,13 @@ initialize() {
         switch(key2) {
             case '[':
                 self.activeWin.gotoFunctionTop(self);
+                self.activeWin.centeringCursor();
                 self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
 
             case 'm':
                 self.activeWin.gotoMethodTop(self);
+                self.activeWin.centeringCursor();
                 self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
         }
@@ -393,11 +395,13 @@ initialize() {
         switch(key2) {
             case ']':
                 self.activeWin.gotoFunctionBottom(self);
+                self.activeWin.centeringCursor();
                 self.activeWin.saveInputedKeyOnTheMovingCursor();
                 break;
 
             case ']':
                 self.activeWin.gotoMethodBottom(self);
+                self.activeWin.centeringCursor();
                 self.activeWin.saveInputedKeyOnTheMovingCursor();
         }
     });

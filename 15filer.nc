@@ -134,9 +134,10 @@ void statusBarView(ViWin* self, Vi* nvi)
 
     wattron(self.win, A_REVERSE);
     mvwprintw(self.win, self.height-1, 0
-        , "%s x %d y %d scroll %d w %d search %ls"
+        , "%s x %d line %d (y %d scroll %d) changed %d search %ls"
         , xbasename(self.fileName)
-        , self.cursorX, self.cursorY, self.scroll
+        , self.cursorX, self.cursorY + self.scroll + 1
+        , self.cursorY, self.scroll
         , self.writed
         , nvi.searchString);
     wattroff(self.win, A_REVERSE);

@@ -395,17 +395,44 @@ initialize() {
 
     self.events.replace('w', lambda(Vi* self, int key) 
     {
-        self.activeWin.forwardWord();
+        if(self.activeWin.digitInput > 0) {
+            for(int i=0; i<self.activeWin.digitInput+1; i++) {
+                self.activeWin.forwardWord();
+            }
+            self.activeWin.digitInput = 0;
+        }
+        else {
+            self.activeWin.forwardWord();
+        }
+        
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('e', lambda(Vi* self, int key) 
     {
-        self.activeWin.forwardWord();
+        if(self.activeWin.digitInput > 0) {
+            for(int i=0; i<self.activeWin.digitInput+1; i++) {
+                self.activeWin.forwardWord();
+            }
+            self.activeWin.digitInput = 0;
+        }
+        else {
+            self.activeWin.forwardWord();
+        }
+        
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('b', lambda(Vi* self, int key) 
     {
-        self.activeWin.backwardWord();
+        if(self.activeWin.digitInput > 0) {
+            for(int i=0; i<self.activeWin.digitInput+1; i++) {
+                self.activeWin.backwardWord();
+            }
+            self.activeWin.digitInput = 0;
+        }
+        else {
+            self.activeWin.backwardWord();
+        }
+        
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }

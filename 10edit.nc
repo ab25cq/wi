@@ -184,10 +184,26 @@ void forwardToNextCharacter1(ViWin* self) {
     
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
-    var cursor_x = line.substring(self.cursorX, -1).index(xsprintf("%c", key).to_wstring(), -1);
-    
-    if(cursor_x != -1) {
-        self.cursorX += cursor_x;
+    if(self.digitInput > 0) {
+        for(int i=0; i<self.digitInput+1; i++) {
+            var cursor_x = line.substring(self.cursorX+1, -1).index(xsprintf("%c", key).to_wstring(), -1);
+            
+            if(cursor_x != -1) {
+                self.cursorX += cursor_x + 1;
+            }
+            else {
+                break;
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var cursor_x = line.substring(self.cursorX + 1, -1).index(xsprintf("%c", key).to_wstring(), -1);
+        
+        if(cursor_x != -1) {
+            self.cursorX += cursor_x + 1;
+        }
     }
 }
 
@@ -196,22 +212,82 @@ void forwardToNextCharacter2(ViWin* self) {
     
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
-    var cursor_x = line.substring(self.cursorX, -1).index(xsprintf("%c", key).to_wstring(), -1);
-    
-    if(cursor_x != -1) {
-        self.cursorX += cursor_x - 1;
+    if(self.digitInput > 0) {
+        for(int i=0; i<self.digitInput+1; i++) {
+            var cursor_x = line.substring(self.cursorX + 2, -1).index(xsprintf("%c", key).to_wstring(), -1);
+            
+            if(cursor_x != -1) {
+                self.cursorX += cursor_x + 1;
+            }
+            else {
+                break;
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var cursor_x = line.substring(self.cursorX+1, -1).index(xsprintf("%c", key).to_wstring(), -1);
+        
+        if(cursor_x != -1) {
+            self.cursorX += cursor_x;
+        }
     }
 }
 
-void backwardToNextCharacter(ViWin* self) {
+void backwardToNextCharacter1(ViWin* self) {
     var key = self.getKey(false);
     
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
-    var cursor_x = line.substring(0, self.cursorX).rindex(xsprintf("%c", key).to_wstring(), -1);
+    if(self.digitInput > 0) {
+        for(int i=0; i<self.digitInput+1; i++) {
+            var cursor_x = line.substring(0, self.cursorX).rindex(xsprintf("%c", key).to_wstring(), -1);
+            
+            if(cursor_x != -1) {
+                self.cursorX = cursor_x;
+            }
+            else {
+                break;
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var cursor_x = line.substring(0, self.cursorX).rindex(xsprintf("%c", key).to_wstring(), -1);
+        
+        if(cursor_x != -1) {
+            self.cursorX = cursor_x;
+        }
+    }
+}
+
+void backwardToNextCharacter2(ViWin* self) {
+    var key = self.getKey(false);
     
-    if(cursor_x != -1) {
-        self.cursorX = cursor_x;
+    var line = self.texts.item(self.scroll+self.cursorY, null);
+    
+    if(self.digitInput > 0) {
+        for(int i=0; i<self.digitInput+1; i++) {
+            var cursor_x = line.substring(0, self.cursorX-1).rindex(xsprintf("%c", key).to_wstring(), -1);
+            
+            if(cursor_x != -1) {
+                self.cursorX = cursor_x + 1;
+            }
+            else {
+                break;
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var cursor_x = line.substring(0, self.cursorX).rindex(xsprintf("%c", key).to_wstring(), -1);
+        
+        if(cursor_x != -1) {
+            self.cursorX = cursor_x + 1;
+        }
     }
 }
 
@@ -305,7 +381,12 @@ initialize() {
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('F', lambda(Vi* self, int key) {
-        self.activeWin.backwardToNextCharacter();
+        self.activeWin.backwardToNextCharacter1();
+
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('T', lambda(Vi* self, int key) {
+        self.activeWin.backwardToNextCharacter2();
 
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });

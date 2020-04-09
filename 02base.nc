@@ -283,11 +283,19 @@ void keyG(ViWin* self, Vi* nvi) {
 
 void moveBottom(ViWin* self) {
     self.saveReturnPoint();
-
-    self.cursorY = self.texts.length()-1;
+    
+    if(self.digitInput > 0) {
+        self.scroll = 0;
+        self.cursorY = self.digitInput;
+        self.digitInput = 0;
+    }
+    else {
+        self.cursorY = self.texts.length()-1;
+    }
 
     self.modifyOverCursorXValue();
     self.modifyOverCursorYValue();
+    self.centeringCursor();
 }
 void openFile(ViWin* self, char* file_name, int line_num) {
     /// implemented by the after layer
@@ -383,7 +391,17 @@ initialize() {
     });
     self.events.replace('$', lambda(Vi* self, int key) 
     {
-        self.activeWin.moveAtTail();
+        if(self.activeWin.digitInput > 0) {
+            self.activeWin.cursorY += self.activeWin.digitInput;
+            self.activeWin.modifyOverCursorYValue();
+            
+            self.activeWin.digitInput = 0;
+            self.activeWin.moveAtTail();
+        }
+        else {
+            self.activeWin.moveAtTail();
+        }
+        
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('D'-'A'+1, lambda(Vi* self, int key) 

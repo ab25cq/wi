@@ -29,7 +29,6 @@ uname -v = #1 SMP Debian 4.9.189-3+deb9u2 (2019-11-11)
 
 PATH: /home/ab25cq/bin
 PATH: /home/ab25cq/bin
-PATH: /home/ab25cq/bin
 PATH: /usr/local/bin
 PATH: /usr/bin
 PATH: /bin
@@ -441,6 +440,7 @@ on clover-lang.org
 
 config.status:813: creating Makefile
 config.status:813: creating config.h
+config.status:988: config.h is unchanged
 
 ## ---------------- ##
 ## Cache variables. ##

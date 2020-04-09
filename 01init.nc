@@ -1,7 +1,6 @@
 #include "common.h"
 
-int xgetmaxx()
-{
+int xgetmaxx(){
     return getmaxx(stdscr);
 /*
 Raspberry PI return -1
@@ -12,8 +11,7 @@ Raspberry PI return -1
 */
 }
 
-int xgetmaxy()
-{
+int xgetmaxy(){
     return getmaxy(stdscr);
 /*
 Raspberry PI return -1
