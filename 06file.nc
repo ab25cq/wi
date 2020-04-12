@@ -265,6 +265,7 @@ void repositionWindows(Vi* self) {
         it.win = win;
 
         it.centeringCursor();
+        it.cursorX = 0;
     }
 }
 

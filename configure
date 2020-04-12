@@ -3688,6 +3688,8 @@ then
 
     $as_echo "#define __64BIT_CPU__ 1" >>confdefs.h
 
+    $as_echo "#define __X86_64__ 1" >>confdefs.h
+
 elif test `uname -m` = i386 || test `uname -m` = i686
 then
     echo x86_32

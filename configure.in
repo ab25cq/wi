@@ -34,6 +34,7 @@ then
     echo x86_64
 
     AC_DEFINE(__64BIT_CPU__, 1)
+    AC_DEFINE(__X86_64__, 1)
 elif test `uname -m` = i386 || test `uname -m` = i686
 then
     echo x86_32

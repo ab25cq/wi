@@ -3,6 +3,7 @@
 #include <ncurses.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include "config.h"
 
 #define SAVE_INPUT_KEY_MAX 256
 
@@ -417,6 +418,8 @@ struct Vi version 15
 impl Vi version 15
 {
     initialize();
+    
+    void repositionWindows(Vi* self);
 
     void activateFiler(Vi* self);
     int main_loop(Vi* self);

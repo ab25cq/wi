@@ -29,7 +29,7 @@ void textsView(ViWin* self, Vi* nvi)
 {
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
-    
+
     if(self.texts.length() > 0) {
         var cursor_line = self.texts.item(self.scroll + self.cursorY, null).printable();
             
@@ -133,7 +133,7 @@ void statusBarView(ViWin* self, Vi* nvi)
     int maxx = getmaxx(self.win);
 
     wattron(self.win, A_REVERSE);
-    mvwprintw(self.win, self.height-1, 0
+    mvwprintw(self.win, maxy-1, 0
         , "%s x %d line %d (y %d scroll %d) changed %d search %ls"
         , xbasename(self.fileName)
         , self.cursorX, self.cursorY + self.scroll + 1
@@ -646,6 +646,14 @@ void sig_winch(int sig_num)
     gVi.view();
     
     gVi.extraView();
+    
+    if(gVi.extraWin) {
+        delwin(gVi.extraWin);
+        
+        int maxx = xgetmaxx();
+        var win = newwin(3,maxx-1, 0, 0);
+        gVi.extraWin = win;
+    }
 }
 
 impl Vi version 15
@@ -664,12 +672,42 @@ initialize() {
     });
 }
 
-void extraView(Vi* self) {
-    var win = self.extraWin;
-    var line = clone self.extraLine;
-    var cursor = self.extraCursor;
+void repositionWindows(Vi* self) {
+    int maxy = xgetmaxy();
+    int maxx = xgetmaxx();
 
+    int filer_width = maxx / 5;
+    int height = maxy / self.wins.length();
+
+    /// determine the position ///
+    self.wins.each {
+        int new_height = height;
+        int new_width = maxx - filer_width;
+
+        int new_y = height * it2;
+        int new_x = filer_width;
+        
+        delwin(it.win);
+        var win = newwin(new_height, new_width, new_y, new_x);
+        keypad(win, true);
+        it.win = win;
+
+        it.y = new_y;
+        it.x = new_x;
+        it.width = new_width;
+        it.height = new_height;
+
+        it.centeringCursor();
+    }
+}
+
+void extraView(Vi* self) {
     if(self.extraWin) {
+        var win = self.extraWin;
+
+        var line = clone self.extraLine;
+        var cursor = self.extraCursor;
+        
         werase(win);
         
         box(win, '|', '-');

@@ -1,3 +1,80 @@
+resize terminal
+termux swipe scroll
+d$
+D
+cc
+c$
+5r
+~
+5~
+^
+$
+d`a
+yy
+Y
+C
+C-wj
+C-wk
+V,c
+V,C
+V,J
+gJ
+V,=
+V,A
+V,r
+e
+f,;
+f,(,)
+-
++
+_
+
+H
+L
+C-y
+C-b
+C-e
+C-f
+z(enter)
+zt
+zb
+z-
+zz
+z.
+s
+S
+X
+I
+C-a,digit incremrnt
+C-x
+R
+V,$
+gv
+V~
+V,:
+[{
+[M
+]m
+]M
+[/
+[*
+]*
+]/
+
+
+
+#if %
+external command
+------
+C-i include
+gd
+g5
+C-F
+:make
+
+
+
+
 C-t, ]]
 ------------------------------------------------------------
 :%s//
