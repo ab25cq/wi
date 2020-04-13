@@ -278,6 +278,10 @@ void keyG(ViWin* self, Vi* nvi) {
         case 'v':
             self.restoreVisualMode(nvi);
             break;
+            
+        case 'J':
+            self.joinLines2();
+            break;
     }
 }
 
@@ -313,6 +317,9 @@ void saveReturnPoint(ViWin* self){
 }
 void saveInputedKeyOnTheMovingCursor(ViWin* self) {
     /// inpelemeted after layer
+}
+void joinLines2(ViWin* self) {
+}
 }
 
 impl Vi version 2 

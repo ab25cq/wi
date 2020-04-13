@@ -15,13 +15,6 @@ void modifyCursorOnDeleting(ViWin* self) {
     self.modifyOverCursorXValue();
 }
 
-void deleteLines(ViWin* self, int head, int tail, Vi* nvi)
-{
-    self.pushUndo();
-    self.texts.delete_range(head, tail);
-    self.modifyCursorOnDeleting();
-}
-
 void deleteOneLine(ViWin* self, Vi* nvi) {
     if(self.digitInput > 0) {
         self.pushUndo();
@@ -30,12 +23,12 @@ void deleteOneLine(ViWin* self, Vi* nvi) {
         nvi.yankKind = kYankKindLine;
         
         for(int i=0; i<self.digitInput+1; i++) {
-            var line = self.texts.item(self.scroll+self.cursorY+i, null);
+            var line = self.texts.item(self.scroll+self.cursorY, null);
             
             if(line != null) {
                 nvi.yank.push_back(clone line);
                 
-                self.texts.delete(self.scroll+self.cursorY+i);
+                self.texts.delete(self.scroll+self.cursorY);
         
                 self.modifyCursorOnDeleting();
             }
@@ -57,15 +50,36 @@ void deleteOneLine(ViWin* self, Vi* nvi) {
     }
 }
 
-void deleteAfterCursor(ViWin* self) {
-    self.pushUndo();
-
-    var line = self.texts.item(self.scroll+self.cursorY, null);
-    if(line != null) {
+void deleteOneLine2(ViWin* self, Vi* nvi) {
+    if(self.digitInput > 0) {
         self.pushUndo();
-        line.delete_range(self.cursorX, -1);
-
-        self.modifyCursorOnDeleting();
+        
+        nvi.yank.reset();
+        nvi.yankKind = kYankKindLine;
+        
+        for(int i=0; i<self.digitInput+1; i++) {
+            var line = self.texts.item(self.scroll+self.cursorY, null);
+            
+            if(line != null) {
+                nvi.yank.push_back(clone line);
+                
+                self.texts.delete(self.scroll+self.cursorY);
+        
+                self.modifyCursorOnDeleting();
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        if(line != null) {
+            self.pushUndo();
+            self.texts.delete(self.scroll+self.cursorY);
+            self.texts.insert(self.scroll+self.cursorY, wstring(""));
+    
+            self.modifyCursorOnDeleting();
+        }
     }
 }
 
@@ -374,14 +388,103 @@ void deleteForNextCharacter2(ViWin* self) {
 
 void deleteCursorCharactor(ViWin* self) {
     self.pushUndo();
+    
+    if(self.digitInput > 0) {
+        int num = self.digitInput + 1;
+        
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        for(int i= 0; i<num; i++) {
+            line.delete(self.cursorX);
+        }
+    
+        self.modifyOverCursorXValue();
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        line.delete(self.cursorX);
+    
+        self.modifyOverCursorXValue();
+    }
+}
 
-    var line = self.texts.item(self.scroll+self.cursorY, null);
-    line.delete(self.cursorX);
+void deleteUntilTail(ViWin* self) {
+    self.pushUndo();
+    
+    if(self.digitInput > 0) {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        line.delete_range(self.cursorX, -1);
+        
+        int num = self.digitInput + 1;
+        
+        for(int i=1; i<num; i++) {
+            var line = self.texts.item(self.scroll+self.cursorY+1, null);
+            
+            if(line != null) {
+                self.texts.delete(self.scroll+self.cursorY+1);
+        
+                self.modifyCursorOnDeleting();
+            }
+        }
+        
+        self.modifyOverCursorXValue();
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        line.delete_range(self.cursorX, -1);
+        
+        self.modifyOverCursorXValue();
+    }
+}
+
+void joinLines(ViWin* self) {
+    self.pushUndo();
+
+    if(self.scroll+self.cursorY+1 < self.texts.length()) {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        var next_line = self.texts.item(self.scroll+self.cursorY+1, null);
+
+        self.texts.replace(self.scroll+self.cursorY, line + wstring(" ") + next_line);
+        self.texts.delete(self.scroll+self.cursorY+1);
+    }
 
     self.modifyOverCursorXValue();
 }
 
-void joinLines(ViWin* self) {
+void yankOneLine(ViWin* self, Vi* nvi) {
+    if(self.digitInput > 0) {
+        self.pushUndo();
+        
+        nvi.yank.reset();
+        nvi.yankKind = kYankKindLine;
+        
+        for(int i=0; i<self.digitInput+1; i++) {
+            var line = self.texts.item(self.scroll+self.cursorY+i, null);
+            
+            if(line != null) {
+                nvi.yank.push_back(clone line);
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        if(line != null) {
+            self.pushUndo();
+            nvi.yank.reset();
+            nvi.yank.push_back(clone line);
+            nvi.yankKind = kYankKindLine;
+        }
+    }
+}
+
+void joinLines2(ViWin* self) {
     self.pushUndo();
 
     if(self.scroll+self.cursorY+1 < self.texts.length()) {
@@ -538,15 +641,39 @@ initialize() {
                 self.activeWin.deleteForNextCharacter2();
                 self.activeWin.writed = true;
                 break;
+                
+            case '$':
+                self.activeWin.deleteUntilTail();
+                self.activeWin.writed = true;
+                break;
         }
 
         self.activeWin.saveInputedKey();
     });
 
     self.events.replace('c', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey(false);
+        var key2 = self.activeWin.getKey(true);
 
         switch(key2) {
+            case '$':
+                self.activeWin.deleteUntilTail();
+                self.enterInsertMode();
+                if(self.activeWin.texts.length() != 0) {
+                    self.activeWin.cursorX++;
+                }
+                self.activeWin.writed = true;
+                break;
+                
+            case 'c':
+                self.activeWin.deleteOneLine2(self);
+                self.enterInsertMode();
+                if(self.activeWin.texts.length() != 0) {
+                    self.activeWin.cursorX = 0;
+                }
+                self.activeWin.writed = true;
+                break;
+                
+                
             case 'w':
             case 'e':
                 self.activeWin.deleteWord(self);
@@ -562,15 +689,32 @@ initialize() {
                 break;
         }
     });
-    self.events.replace('C', lambda(Vi* self, int key) {
-        self.activeWin.deleteAfterCursor();
-        self.enterInsertMode();
-        self.activeWin.writed = true;
+    self.events.replace('y', lambda(Vi* self, int key) {
+        var key2 = self.activeWin.getKey(true);
+
+        switch(key2) {
+            case 'y':
+                self.activeWin.yankOneLine(self);
+                break;
+        }
+    });
+    self.events.replace('Y', lambda(Vi* self, int key) {
+        self.activeWin.yankOneLine(self);
     });
     self.events.replace('D', lambda(Vi* self, int key) {
-        self.activeWin.deleteAfterCursor();
+        self.activeWin.deleteUntilTail();
         self.activeWin.writed = true;
+
         self.activeWin.saveInputedKey();
+    });
+
+    self.events.replace('C', lambda(Vi* self, int key) {
+        self.activeWin.deleteUntilTail();
+        self.enterInsertMode();
+        if(self.activeWin.texts.length() != 0) {
+            self.activeWin.cursorX++;
+        }
+        self.activeWin.writed = true;
     });
     self.events.replace('x', lambda(Vi* self, int key) {
         self.activeWin.deleteCursorCharactor();
@@ -580,12 +724,6 @@ initialize() {
     });
     self.events.replace('J', lambda(Vi* self, int key) {
         self.activeWin.joinLines();
-        self.activeWin.writed = true;
-
-        self.activeWin.saveInputedKey();
-    });
-    self.events.replace('D', lambda(Vi* self, int key) {
-        self.activeWin.deleteAfterCursor();
         self.activeWin.writed = true;
 
         self.activeWin.saveInputedKey();

@@ -1,24 +1,18 @@
-resize terminal
-termux swipe scroll
-d$
-D
-cc
-c$
+ct,cf tigai
+ce,cw tigai
+de,dw tigai
 5r
 ~
 5~
 ^
 $
 d`a
-yy
-Y
 C
 C-wj
 C-wk
 V,c
 V,C
 V,J
-gJ
 V,=
 V,A
 V,r
@@ -89,3 +83,16 @@ multiple visible lines at the cursor line
 digit repeat
 V, C-v, dot
 dot
+resize terminal
+d$
+D
+cc
+c$
+5D
+5dd
+5C
+5cc
+gJ
+termux swipe scroll
+yy
+Y

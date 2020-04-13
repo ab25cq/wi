@@ -1,31 +1,35 @@
 #include "common.h"
 
 int xgetmaxx(){
-#ifdef __X86_64__
     var ws = new winsize;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, ws);
     
-    return ws.ws_col;
-#else
+    int result = ws.ws_col;
 /*
 Raspberry PI return -1
 */
-    return getmaxx(stdscr);
-#endif
+    if(result == -1) {
+        return getmaxx(stdscr);
+    }
+    else {
+        return result;
+    }
 }
 
 int xgetmaxy(){
-#ifdef __X86_64__
     var ws = new winsize;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, ws);
-
-    return ws.ws_row;
-#else
+    
+    int result = ws.ws_row;
 /*
 Raspberry PI return -1
 */
-    return getmaxy(stdscr);
-#endif
+    if(result == -1) {
+        return getmaxx(stdscr);
+    }
+    else {
+        return result;
+    }
 }
 
 impl ViWin 

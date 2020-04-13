@@ -135,7 +135,6 @@ void saveInputedKeyOnTheMovingCursor(ViWin* self) {
 void saveInputedKey(ViWin* self) {
     if(!self.autoInput && !self.pressedDot) {
         if(self.digitInput > 0) {
-
             self.autoInput = true;
             self.autoInputIndex = 0;
             self.savedInputedKeys = new vector<int>.initialize();

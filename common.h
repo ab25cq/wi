@@ -90,6 +90,8 @@ impl ViWin version 2
     void saveReturnPoint(ViWin* self);
 
     void restoreVisualMode(ViWin* self, Vi* nvi);
+    
+    void joinLines2(ViWin* self);
 }
 
 struct Vi version 2 
@@ -312,6 +314,7 @@ impl ViWin version 10
 {
     void deleteLines(ViWin* self, int head, int tail, Vi* nvi);
     void deleteOneLine(ViWin* self, Vi* nvi);
+    void joinLines2(ViWin* self);
 }
 
 impl Vi version 10
