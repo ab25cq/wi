@@ -410,6 +410,28 @@ void deleteCursorCharactor(ViWin* self) {
     }
 }
 
+void replaceCursorCharactor(ViWin* self) {
+    self.pushUndo();
+    
+    var key = self.getKey(true);
+    
+    if(self.digitInput > 0) {
+        int num = self.digitInput + 1;
+        
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        for(int i= 0; i<num; i++) {
+            line.replace(self.cursorX+i, (wchar_t)key);
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        line.replace(self.cursorX, (wchar_t)key);
+    }
+}
+
 void deleteUntilTail(ViWin* self) {
     self.pushUndo();
     
@@ -682,6 +704,11 @@ initialize() {
                 break;
                 
             case 't':
+                self.activeWin.deleteForNextCharacter2();
+                self.enterInsertMode();
+                self.activeWin.writed = true;
+                break;
+                
             case 'f':
                 self.activeWin.deleteForNextCharacter();
                 self.enterInsertMode();
@@ -718,6 +745,12 @@ initialize() {
     });
     self.events.replace('x', lambda(Vi* self, int key) {
         self.activeWin.deleteCursorCharactor();
+        self.activeWin.writed = true;
+
+        self.activeWin.saveInputedKey();
+    });
+    self.events.replace('r', lambda(Vi* self, int key) {
+        self.activeWin.replaceCursorCharactor();
         self.activeWin.writed = true;
 
         self.activeWin.saveInputedKey();

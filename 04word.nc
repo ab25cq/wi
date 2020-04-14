@@ -175,7 +175,199 @@ void forwardWord(ViWin* self) {
             }
         }
     }
+    
+    if(iswblank(*p)) {
+        while(iswblank(*p)) {
+            p++;
+            self.cursorX++;
+
+            if(self.cursorX >= line.length())
+            {
+                self.cursorY++;
+
+                if(self.scroll+self.cursorY > self.texts.length()-1)
+                {
+                    self.cursorY--;
+                    self.modifyUnderCursorYValue();
+                    line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                    self.cursorX = line.length()-1;
+                    break;
+                }
+
+                self.modifyOverCursorYValue();
+
+                line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                p = line;
+                self.cursorX = 0;
+            }
+        }
+    }
 }
+
+void forwardWord2(ViWin* self) {
+    wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+
+    wchar_t* p = line + self.cursorX;
+
+    if(self.cursorX == wcslen(line)) 
+    {
+        self.cursorY++;
+
+        self.modifyOverCursorYValue();
+
+        line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+
+        self.cursorX = 0;
+    }
+
+    if(wcslen(line) == 0) {
+        while(wcslen(line) == 0) {
+            self.cursorY++;
+
+            self.modifyOverCursorYValue();
+
+            if(self.scroll+self.cursorY >= self.texts.length()-1)
+            {
+                break;
+            }
+
+            line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        }
+
+        self.cursorX = 0;
+    }
+    else {
+        p++;
+        self.cursorX++;
+        
+        if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || *p == '_')
+        {
+        
+            while((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || *p == '_')
+            {
+                p++;
+                self.cursorX++;
+    
+                if(self.cursorX >= line.length())
+                {
+                    self.cursorY++;
+    
+                    if(self.scroll+self.cursorY > self.texts.length()-1)
+                    {
+                        self.cursorY--;
+                        self.modifyUnderCursorYValue();
+                        line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                        self.cursorX = line.length()-1;
+                        break;
+                    }
+    
+                    self.modifyOverCursorYValue();
+    
+                    line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                    p = line;
+                    self.cursorX = 0;
+                }
+            }
+            self.cursorX--;
+            
+            if(self.cursorX < 0) {
+                self.cursorX = 0;
+            }
+        }
+        else if((*p >= '!' && *p <= '/') || (*p >= ':' && *p <= '@') || (*p >= '{' && *p <= '~' ) || (*p >= '[' && *p <= '`'))
+        {
+            while((*p >= '!' && *p <= '/') || (*p >= ':' && *p <= '@') || (*p >= '{' && *p <= '~' ) || (*p >= '[' && *p <= '`'))
+            {
+                p++;
+                self.cursorX++;
+    
+                if(self.cursorX >= line.length())
+                {
+                    self.cursorY++;
+    
+                    if(self.scroll+self.cursorY > self.texts.length()-1)
+                    {
+                        self.cursorY--;
+                        self.modifyUnderCursorYValue();
+                        line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                        self.cursorX = line.length()-1;
+                        break;
+                    }
+    
+                    self.modifyOverCursorYValue();
+    
+                    line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                    p = line;
+                    self.cursorX = 0;
+                }
+            }
+            self.cursorX--;
+            
+            if(self.cursorX < 0) {
+                self.cursorX = 0;
+            }
+        }
+        else if(iswblank(*p)) {
+            while(iswblank(*p)) {
+                p++;
+                self.cursorX++;
+    
+                if(self.cursorX >= line.length())
+                {
+                    self.cursorY++;
+    
+                    if(self.scroll+self.cursorY > self.texts.length()-1)
+                    {
+                        self.cursorY--;
+                        self.modifyUnderCursorYValue();
+                        line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                        self.cursorX = line.length()-1;
+                        break;
+                    }
+    
+                    self.modifyOverCursorYValue();
+    
+                    line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                    p = line;
+                    self.cursorX = 0;
+                }
+            }
+        }
+        else if(iswdigit(*p)) {
+            while(iswdigit(*p)) {
+                p++;
+                self.cursorX++;
+    
+                if(self.cursorX >= line.length())
+                {
+                    self.cursorY++;
+    
+                    if(self.scroll+self.cursorY > self.texts.length()-1)
+                    {
+                        self.cursorY--;
+                        self.modifyUnderCursorYValue();
+                        line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                        self.cursorX = line.length()-1;
+                        break;
+                    }
+    
+                    self.modifyOverCursorYValue();
+    
+                    line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+                    p = line;
+                    self.cursorX = 0;
+                }
+            }
+            self.cursorX--;
+            
+            if(self.cursorX < 0) {
+                self.cursorX = 0;
+            }
+        }
+    }
+}
+
+
 void backwardWord(ViWin* self) {
     wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
@@ -411,12 +603,12 @@ initialize() {
     {
         if(self.activeWin.digitInput > 0) {
             for(int i=0; i<self.activeWin.digitInput+1; i++) {
-                self.activeWin.forwardWord();
+                self.activeWin.forwardWord2();
             }
             self.activeWin.digitInput = 0;
         }
         else {
-            self.activeWin.forwardWord();
+            self.activeWin.forwardWord2();
         }
         
         self.activeWin.saveInputedKeyOnTheMovingCursor();

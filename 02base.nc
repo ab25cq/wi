@@ -259,6 +259,7 @@ void moveTop(ViWin* self) {
 
     self.scroll = 0;
     self.cursorY = 0;
+    self.cursorX = 0;
 
     self.modifyOverCursorXValue();
 }

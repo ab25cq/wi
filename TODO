@@ -1,6 +1,4 @@
-ct,cf tigai
-ce,cw tigai
-de,dw tigai
+resize terminal
 5r
 ~
 5~
@@ -83,7 +81,6 @@ multiple visible lines at the cursor line
 digit repeat
 V, C-v, dot
 dot
-resize terminal
 d$
 D
 cc
@@ -96,3 +93,6 @@ gJ
 termux swipe scroll
 yy
 Y
+ct,cf tigai
+ce,cw tigai
+de,dw tigai
