@@ -280,6 +280,10 @@ void keyG(ViWin* self, Vi* nvi) {
             self.restoreVisualMode(nvi);
             break;
             
+        case '/':
+            nvi.enterSearchMode(true);
+            break;
+            
         case 'J':
             self.joinLines2();
             break;
@@ -516,4 +520,9 @@ void repositionFiler(Vi* self)
 {
     /// implemented by the after layer
 }
+void enterSearchMode(Vi* self, bool regex_search)
+{
+    /// implemented by the after layer
+}
+
 }

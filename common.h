@@ -116,6 +116,7 @@ impl Vi version 2
     void view(Vi* self);
     void clearView(Vi* self);
     void exitFromApp(Vi* self);
+    void enterSearchMode(Vi* self, bool regex_search);
 }
 
 /// 3insert_mode.h ///
@@ -290,6 +291,7 @@ enum eMode { kSearchMode = kVisualMode + 1 };
 struct Vi version 9
 {
     wstring searchString;
+    bool regexSearch;
 };
 
 impl ViWin version 9
@@ -303,7 +305,7 @@ impl ViWin version 9
 
 impl Vi version 9
 {
-    void enterSearchMode(Vi* self);
+    void enterSearchMode(Vi* self, bool regex_search);
     void exitFromSearchMode(Vi* self);
 
     initialize();

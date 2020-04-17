@@ -1,9 +1,8 @@
 resize terminal
-5r
-~
-5~
-^
-$
+g/ regex search
+none regex search
+sp completion
+search string saved when finishing
 d`a
 C
 C-wj
@@ -96,3 +95,10 @@ Y
 ct,cf tigai
 ce,cw tigai
 de,dw tigai
+5r
+~
+5~
+5$
+^
+5^
+one window mode

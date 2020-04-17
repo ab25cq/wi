@@ -1,12 +1,15 @@
 # wi 
 
-Double Window vi clone implemented by neo-c
+vi clone implemented by neo-c
 
 some compatibility for vim
 
-version 0.8.2
+version 0.8.3
 
-C-F → move the side bar
+/ → plain text search
+g/ → regex search
+
+C-F → open the side bar(filer mode)
 
 In The Side Bar
 

@@ -20,9 +20,9 @@ impl ViWin version 15
 initialize(int y, int x, int width, int height, Vi* vi) {
     int maxx = xgetmaxx();
 
-    int filer_width = maxx / 5;
-
-    inherit(self, y, x + filer_width, width-filer_width, height, vi);
+    //int filer_width = maxx / 5;
+    
+    inherit(self, y, x, width, height, vi);
 }
 
 void textsView(ViWin* self, Vi* nvi)
@@ -143,6 +143,31 @@ void statusBarView(ViWin* self, Vi* nvi)
     wattroff(self.win, A_REVERSE);
 
     wrefresh(self.win);
+}
+}
+
+impl Vi version 15
+{
+void activateFiler(Vi* self) {
+    self.filer.active = true;
+
+    int maxy = xgetmaxy();
+    int maxx = xgetmaxx();
+
+    int filer_width = maxx / 5;
+
+    self.filer.win = newwin(maxy, filer_width, 0, 0);
+    keypad(self.filer.win, true);
+    
+    self.repositionWindows();
+}
+
+void deactivateFiler(Vi* self) {
+    self.filer.active = false;
+    delwin(self.filer.win);
+    self.repositionWindows();
+
+    self.filer.win = null;
 }
 }
 
@@ -273,15 +298,13 @@ initialize() {
     int maxy = xgetmaxy();
     int maxx = xgetmaxx();
 
-    int width = maxx / 5;
-
-    self.win = newwin(maxy, width, 0, 0);
-    keypad(self.win, true);
     self.active = false;
+
+    int filer_width = maxx / 5;
 
     self.scroll = 0;
     self.cursor = 0;
-    self.width = width;
+    self.width = filer_width;
 
     char cwd[PATH_MAX];
     getcwd(cwd, PATH_MAX);
@@ -297,12 +320,12 @@ finalize() {
     delwin(self.win);
 }
 
-void search(ViFiler* self, Vi* nvi) {
+void search(ViFiler* self, Vi* nvi, int start_point) {
     int maxy = xgetmaxy();
     
     self.files.each {
-        if(it.index(self.searchString, -1) != -1 
-            && it2 > self.cursor + self.scroll) 
+        if(it.index(self.searchString, -1) != -1
+            && it2 > start_point)
         {
             self.scroll = 0;
             self.cursor = it2;
@@ -344,6 +367,7 @@ void view(ViFiler* self, Vi* nvi)
     //werase(self.win);
     
     int maxx = xgetmaxx();
+    
     int filer_width = maxx / 5;
 
     int maxy = xgetmaxy();
@@ -517,7 +541,7 @@ void input(ViFiler* self, Vi* nvi) {
             else {
                 nvi.activeWin.writeFile();
                 nvi.openFile(path, -1);
-                self.active = false;
+                nvi.deactivateFiler();
             }
             }
             break;
@@ -578,7 +602,7 @@ void input(ViFiler* self, Vi* nvi) {
         case 'C'-'A'+1:
         case 'F'-'A'+1:
         case 27:
-            self.active = false;
+            nvi.deactivateFiler();
             break;
 
         case '*':
@@ -593,12 +617,12 @@ void input(ViFiler* self, Vi* nvi) {
         case 'f': {
             self.searchString = nvi.inputBox(string(""));
            
-            self.search(nvi);
+            self.search(nvi, 0);
             }
             break;
 
         case 'n':
-            self.search(nvi);
+            self.search(nvi, self.cursor + self.scroll);
             break;
 
         case 'N':
@@ -607,7 +631,7 @@ void input(ViFiler* self, Vi* nvi) {
         
         case 'o':
             nvi.openNewFile(file_name);
-            self.active = false;
+            nvi.deactivateFiler();
             break;
         
         case 'q':
@@ -640,7 +664,9 @@ Vi* gVi;
 void sig_winch(int sig_num)
 {
     gVi.repositionWindows();
-    gVi.repositionFiler();
+    if(gVi.filer.active) {
+        gVi.repositionFiler();
+    }
     
     gVi.clearView();
     gVi.view();
@@ -676,7 +702,14 @@ void repositionWindows(Vi* self) {
     int maxy = xgetmaxy();
     int maxx = xgetmaxx();
 
-    int filer_width = maxx / 5;
+    int filer_width;
+    if(self.filer.active) {
+        filer_width = maxx / 5;
+    }
+    else {
+        filer_width = 0;
+    }
+    
     int height = maxy / self.wins.length();
 
     /// determine the position ///
@@ -886,26 +919,28 @@ string inputBox(Vi* self, string default_value) {
     return command;
 }
 
-void activateFiler(Vi* self) {
-    self.filer.active = true;
-}
-
 void view(Vi* self) {
-    xclear(self.filer.win);
+    if(self.filer.active) {
+        xclear(self.filer.win);
+    }
 
     self.wins.each {
         xclear(it.win);
     }
     
-    xclear(self.filer.win);
-
-    self.filer.view(self);
+    if(self.filer.active) {
+        xclear(self.filer.win);
+    
+        self.filer.view(self);
+    }
 
     self.wins.each {
         it.view(self);
     }
 
-    wrefresh(self.filer.win);
+    if(self.filer.active) {
+        wrefresh(self.filer.win);
+    }
 
     self.wins.each {
         wrefresh(it.win);
@@ -918,12 +953,14 @@ void clearView(Vi* self)
     clear();
     clearok(stdscr, false);
 
-    clearok(self.filer.win, true);
-    wclear(self.filer.win);
-    clearok(self.filer.win, false);
+    if(self.filer.active) {
+        clearok(self.filer.win, true);
+        wclear(self.filer.win);
+        clearok(self.filer.win, false);
 
-    self.filer.view(self);
-    wrefresh(self.filer.win);
+        self.filer.view(self);
+        wrefresh(self.filer.win);
+    }
 
     self.wins.each {
         clearok(it.win, true);

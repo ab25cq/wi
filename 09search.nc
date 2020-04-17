@@ -53,7 +53,14 @@ void search(ViWin* self, Vi* nvi) {
     }
     else {
         self.texts.sublist(self.scroll+self.cursorY+1, -1).each {
-            int x = it.index(nvi.searchString, -1);
+            int x;
+            
+            if(nvi.regexSearch) {
+                x = it.to_string("").index_regex(nvi.searchString.to_string("").to_regex(), -1);
+            }
+            else {
+                x = it.index(nvi.searchString, -1);
+            }
 
             if(x != -1) {
                 self.saveReturnPoint();
@@ -93,7 +100,13 @@ void searchReverse(ViWin* self, Vi* nvi) {
     }
     else {
         self.texts.sublist(0, self.scroll+self.cursorY).reverse().each {
-            int x = it.rindex(nvi.searchString, -1);
+            int x;
+            if(nvi.regexSearch) {
+                x = it.to_string("").rindex_regex(nvi.searchString.to_string("").to_regex(), -1);
+            }
+            else {
+                x = it.rindex(nvi.searchString, -1);
+            }
 
             if(x != -1) {
                 self.saveReturnPoint();
@@ -228,9 +241,10 @@ void input(ViWin* self, Vi* nvi) {
 
 impl Vi version 9
 {
-void enterSearchMode(Vi* self) {
+void enterSearchMode(Vi* self, bool regex_search) {
     self.mode = kSearchMode;
     self.searchString = wstring("");
+    self.regexSearch = regex_search;
 }
 void exitFromSearchMode(Vi* self) {
     self.mode = kEditMode;
@@ -241,7 +255,7 @@ initialize() {
 
     self.events.replace('/', lambda(Vi* self, int key) 
     {
-        self.enterSearchMode();
+        self.enterSearchMode(false);
     });
 
     self.events.replace('n', lambda(Vi* self, int key) 
