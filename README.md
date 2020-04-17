@@ -7,6 +7,7 @@ some compatibility for vim
 version 0.8.3
 
 / → plain text search
+
 g/ → regex search
 
 C-F → open the side bar(filer mode)
