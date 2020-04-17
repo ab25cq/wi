@@ -115,7 +115,7 @@ wstring&? selector(ViWin* self, list<wstring>* lines) {
     return result;
 }
 
-void completion(ViWin* self) {
+void completion(ViWin* self, Vi* nvi) {
     wchar_t* line = self.texts.item(self.scroll+self.cursorY, null);
 
     wchar_t* p = line + self.cursorX;
@@ -138,13 +138,15 @@ void completion(ViWin* self) {
 
     var candidates = new list<wstring>.initialize();
 
-    self.texts.each {
-        var li = it.to_string("").scan(regex("[a-zA-Z0-9_]+", false, false, false, false, false, false, false, false));
-
-        li.each {
-            if(it.index(word.to_string(""), -1) != -1)
-            {
-                candidates.push_back(it.to_wstring());
+    nvi.wins.each {
+        it.texts.each {
+            var li = it.to_string("").scan(regex("[a-zA-Z0-9_]+", false, false, false, false, false, false, false, false));
+    
+            li.each {
+                if(it.index(word.to_string(""), -1) != -1)
+                {
+                    candidates.push_back(it.to_wstring());
+                }
             }
         }
     }

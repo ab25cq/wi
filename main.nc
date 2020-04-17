@@ -35,5 +35,6 @@ int main(int argc, char** argv)
     }
     
     int result = nvi.main_loop()
+    
     result
 }

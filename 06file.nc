@@ -98,6 +98,7 @@ void readCursorPosition(ViWin* self, char* file_name) {
     
     self.modifyOverCursorYValue();
 }
+
 void openFile(ViWin* self, char* file_name, int line_num)
 {
     FILE* f = fopen(file_name, "r");

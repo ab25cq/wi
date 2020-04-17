@@ -357,7 +357,7 @@ void inputInsertMode(ViWin* self, Vi* nvi)
             self.insertText(wstring("    "));
         }
         else {
-            self.completion();
+            self.completion(nvi);
         }
     }
     else if(key > 127) {
@@ -466,7 +466,7 @@ void pushUndo(ViWin* self) {
 void writedFlagOn(ViWin* self) {
     /// implemented by the after layer
 }
-void completion(ViWin* self) {
+void completion(ViWin* self, Vi* nvi) {
     /// implemented by the after layer
 }
 void clearInputedKey(ViWin* self) {

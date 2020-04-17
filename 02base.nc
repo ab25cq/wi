@@ -284,6 +284,7 @@ void keyG(ViWin* self, Vi* nvi) {
             nvi.enterSearchMode(true);
             break;
             
+            
         case 'J':
             self.joinLines2();
             break;

@@ -1,8 +1,4 @@
-resize terminal
-g/ regex search
-none regex search
 sp completion
-search string saved when finishing
 d`a
 C
 C-wj
@@ -102,3 +98,7 @@ de,dw tigai
 ^
 5^
 one window mode
+resize terminal
+g/ regex search
+none regex search
+search string saved when finishing

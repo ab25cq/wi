@@ -4,6 +4,9 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <limits.h>
+#include <wctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "common.h"
 
@@ -16,8 +19,7 @@ void searchModeView(ViWin* self, Vi* nvi)
     self.textsView(nvi);
 
     wattron(self.win, A_REVERSE);
-    mvwprintw(self.win, self.height-1, 0, "/%ls"
-                    , nvi.searchString);
+    mvwprintw(self.win, self.height-1, 0, "/%ls", nvi.searchString);
     wattroff(self.win, A_REVERSE);
 
     //wrefresh(self.win);
@@ -33,14 +35,12 @@ void view(ViWin* self, Vi* nvi) {
 }
 
 void search(ViWin* self, Vi* nvi) {
-    if(nvi.searchString == null ||
-        wcscmp(nvi.searchString, wstring("")) == 0) 
+    if(nvi.searchString == null || wcscmp(nvi.searchString, wstring("")) == 0) 
     {
         return;
     }
     
-    var cursor_line = self.texts
-            .item(self.scroll+self.cursorY, null);
+    var cursor_line = self.texts.item(self.scroll+self.cursorY, null);
 
     int x = cursor_line.substring(self.cursorX+1, -1)
                 .index(nvi.searchString, -1);
@@ -241,6 +241,69 @@ void input(ViWin* self, Vi* nvi) {
 
 impl Vi version 9
 {
+void saveSearchString(Vi* self, char* file_name) {
+    char* home = getenv("HOME");
+    
+    if(home == null) {
+        return;
+    }
+    
+    char file_name2[PATH_MAX];
+    
+    snprintf(file_name2, PATH_MAX, "%s/.wi", home);
+    
+    (void)mkdir(file_name2, 0755);
+    
+    snprintf(file_name2, PATH_MAX, "%s/.wi/%s", home, file_name);
+    
+    FILE* f = fopen(file_name2, "w");
+
+    if(f == null) {
+        return;
+    }
+    
+    if(self.searchString != null && wcscmp(self.searchString, wstring("")) != 0) 
+    {
+        fprintf(f, "%ls\n", self.searchString);
+    }
+    
+    fclose(f);
+}
+
+void readSearchString(Vi* self, char* file_name) {
+    char* home = getenv("HOME");
+    
+    if(home == null) {
+        self.searchString = wstring("");
+        return;
+    }
+    
+    char file_name2[PATH_MAX];
+    
+    snprintf(file_name2, PATH_MAX, "%s/.wi/%s", home, file_name);
+    
+    FILE* f = fopen(file_name2, "r");
+
+    if(f == null) {
+        self.searchString = wstring("");
+        return;
+    }
+    
+    char line[4096];
+
+    if(fread(line, 1, 4096, f) <= 0) {
+        fclose(f);
+        self.searchString = wstring("");
+        return;
+    }
+    
+    line[strlen(line)-1] = '\0';
+
+    fclose(f);
+    
+    self.searchString = wstring(line);
+}
+
 void enterSearchMode(Vi* self, bool regex_search) {
     self.mode = kSearchMode;
     self.searchString = wstring("");
@@ -252,6 +315,8 @@ void exitFromSearchMode(Vi* self) {
 
 initialize() {
     inherit(self);
+    
+    self.readSearchString("searchString.wi");
 
     self.events.replace('/', lambda(Vi* self, int key) 
     {
@@ -279,4 +344,11 @@ initialize() {
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }
+    
+finalize() {
+    self.saveSearchString("searchString.wi");
+    
+    inherit(self);
+}
+
 }

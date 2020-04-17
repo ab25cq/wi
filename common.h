@@ -132,7 +132,7 @@ impl ViWin version 3
 
     void pushUndo(ViWin* self);
     void writedFlagOn(ViWin* self);
-    void completion(ViWin* self);
+    void completion(ViWin* self, Vi* nvi);
     void clearInputedKey(ViWin* self);
     void saveInputedKey(ViWin* self);
     
@@ -296,6 +296,9 @@ struct Vi version 9
 
 impl ViWin version 9
 {
+    void saveSearchString(Vi* self, char* file_name);
+    void readSearchString(Vi* self, char* file_name);
+    
     void searchModeView(ViWin* self, Vi* nvi);
     void view(ViWin* self, Vi* nvi);
 
@@ -309,6 +312,7 @@ impl Vi version 9
     void exitFromSearchMode(Vi* self);
 
     initialize();
+    finalize();
 }
 
 /// 10edit.h ///
@@ -359,7 +363,7 @@ impl Vi version 12
 
 impl ViWin version 13 
 {
-    void completion(ViWin* self);
+    void completion(ViWin* self, Vi* nvi);
 }
 
 // 14dot.h
@@ -411,6 +415,12 @@ struct ViFiler
     bool active;
     string searchString;
 };
+
+impl ViFiler
+{
+initialize();
+finalize();
+}
 
 struct Vi version 15
 {

@@ -316,7 +316,6 @@ initialize() {
 
 
 finalize() {
-    delete self.files;
     delwin(self.win);
 }
 
