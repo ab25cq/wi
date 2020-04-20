@@ -123,7 +123,7 @@ void searchReverse(ViWin* self, Vi* nvi) {
 
 void searchWordOnCursor(ViWin* self, Vi* nvi)
 {
-    wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+    var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     if(self.cursorX < line.length()) {
         wchar_t* p = line + self.cursorX;
@@ -161,7 +161,7 @@ void searchWordOnCursor(ViWin* self, Vi* nvi)
 }
 void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
 {
-    wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+    var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     if(self.cursorX < line.length()) {
         int cursor_x_before = self.cursorX;

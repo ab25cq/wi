@@ -210,16 +210,14 @@ void yankOnHorizonVisualMode(ViWin* self, Vi* nvi) {
     
     if(y < hv_y) {
         nvi.yank.reset();
-        var first_line = self.texts.item(y, null)
-                            .substring(self.cursorX, -1);
+        var first_line = self.texts.item(y, null).substring(self.cursorX, -1);
         
         nvi.yank.push_back(clone first_line);
         
         self.texts.sublist(y+1, hv_y).each {
             nvi.yank.push_back(clone it);
         }
-        var last_line = self.texts.item(hv_y, null)
-                .substring(0, self.visualModeHorizonHeadX+1);
+        var last_line = self.texts.item(hv_y, null).substring(0, self.visualModeHorizonHeadX+1);
         
         nvi.yank.push_back(clone last_line);
         
@@ -232,14 +230,12 @@ void yankOnHorizonVisualMode(ViWin* self, Vi* nvi) {
         int tail = self.cursorX;
         
         if(head < tail) {
-            var line = self.texts.item(y, null)
-                    .substring(head, tail+1);
+            var line = self.texts.item(y, null).substring(head, tail+1);
 
             nvi.yank.push_back(clone line);
         }
         else {
-            var line = self.texts.item(y, null)
-                    .substring(tail, head+1);
+            var line = self.texts.item(y, null).substring(tail, head+1);
             
             nvi.yank.push_back(clone line);
         }
@@ -248,16 +244,14 @@ void yankOnHorizonVisualMode(ViWin* self, Vi* nvi) {
     }
     else {
         nvi.yank.reset();
-        var first_line = self.texts.item(hv_y, null)
-                .substring(self.visualModeHorizonHeadX, -1);
+        var first_line = self.texts.item(hv_y, null).substring(self.visualModeHorizonHeadX, -1);
         
         nvi.yank.push_back(clone first_line);
         
         self.texts.sublist(hv_y+1, y).each {
             nvi.yank.push_back(clone it);
         }
-        var last_line = self.texts.item(y, null)
-                .substring(0, self.cursorX+1);
+        var last_line = self.texts.item(y, null).substring(0, self.cursorX+1);
         
         nvi.yank.push_back(clone last_line);
         nvi.yankKind = kYankKindNoLine;

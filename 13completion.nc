@@ -9,7 +9,7 @@
 
 impl ViWin version 13 
 {
-wstring&? selector(ViWin* self, list<wstring>* lines) {
+wstring&? selector2(ViWin* self, list<wstring>* lines) {
     wstring&? result = null;
 
     bool end_of_select = false;
@@ -116,7 +116,7 @@ wstring&? selector(ViWin* self, list<wstring>* lines) {
 }
 
 void completion(ViWin* self, Vi* nvi) {
-    wchar_t* line = self.texts.item(self.scroll+self.cursorY, null);
+    var line = self.texts.item(self.scroll+self.cursorY, null);
 
     wchar_t* p = line + self.cursorX;
     p--;
@@ -134,7 +134,7 @@ void completion(ViWin* self, Vi* nvi) {
     
     int len = (line + self.cursorX - p) / sizeof(wchar_t);
 
-    var word = line.to_wstring().substring(self.cursorX-len, self.cursorX);
+    var word = line.substring(self.cursorX-len, self.cursorX);
 
     var candidates = new list<wstring>.initialize();
 
@@ -153,7 +153,7 @@ void completion(ViWin* self, Vi* nvi) {
 
     var candidates2 = candidates.sort().uniq();
 
-    var candidate = self.selector(candidates2);
+    var candidate = self.selector2(candidates2);
 
     var append = candidate.substring(len, -1);
     self.insertText(append);

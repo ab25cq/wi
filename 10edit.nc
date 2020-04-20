@@ -87,7 +87,7 @@ void deleteWord(ViWin* self, Vi* nvi) {
     self.pushUndo();
     
     if(self.digitInput > 0) {
-        wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
     
         if(wcslen(line) == 0) {
             self.deleteOneLine(nvi);
@@ -172,7 +172,7 @@ void deleteWord(ViWin* self, Vi* nvi) {
         self.digitInput = 0;
     }
     else {
-        wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
     
         if(wcslen(line) == 0) {
             self.deleteOneLine(nvi);
@@ -258,7 +258,7 @@ void deleteForNextCharacter(ViWin* self) {
     if(self.digitInput > 0) {
         var key = self.getKey(false);
     
-        wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
     
         if(wcslen(line) > 0) {
             int x = self.cursorX;
@@ -295,7 +295,7 @@ void deleteForNextCharacter(ViWin* self) {
     else {
         var key = self.getKey(false);
     
-        wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
     
         if(wcslen(line) > 0) {
             int x = self.cursorX;
@@ -325,7 +325,7 @@ void deleteForNextCharacter2(ViWin* self) {
     if(self.digitInput > 0) {
         var key = self.getKey(false);
     
-        wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
     
         if(wcslen(line) > 0) {
             int x = self.cursorX;
@@ -362,7 +362,7 @@ void deleteForNextCharacter2(ViWin* self) {
     else {
         var key = self.getKey(false);
     
-        wstring& line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+        var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
     
         if(wcslen(line) > 0) {
             int x = self.cursorX;

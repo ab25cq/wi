@@ -9,38 +9,15 @@
 #include <locale.h>
 #include <wctype.h>
 
-struct aaa {
-    int bbb;
-};
-
-void aaaa()
-{
-    var a = new vector<string>.initialize();
-
-    a.each {
-        if(true) {
-        }
-        else {
-        }
-    }
-}
-
 int main()
 {
+    var li = list!("AAA", "ABC", "DEF");
+    
+    var li2 = li.filter { it[0] == 'A' };
+    
+    li2.each {
+        printf("%s\n", it);
+    }
     
     return 0;
 }
-
-/*
-void aaaa()
-{
-    var a = new vector<string>.initialize();
-
-    a.each {
-        if(true) {
-        }
-        else {
-        }
-    }
-}
-*/

@@ -343,6 +343,7 @@ void openNewFile(Vi* self, char* file_name) {
     int height = maxy / (self.wins.length() + 1);
 
     var win = new ViWin.initialize(0,0, maxx-1, height, self);
+    
     win.openFile(file_name, -1);
 
     self.activeWin = win;
@@ -360,7 +361,7 @@ void openNewFile(Vi* self, char* file_name) {
 
 void closeActiveWin(Vi* self) {
     int active_pos = self.wins.find(self.activeWin, -1);
-
+    
     self.wins.delete(active_pos);
 
     self.repositionWindows();

@@ -508,8 +508,7 @@ void input(ViFiler* self, Vi* nvi) {
             break;
 
         case 'x': {
-            var cursor_file = self.files
-                    .item(self.scroll+self.cursor, null);
+            var cursor_file = self.files.item(self.scroll+self.cursor, null);
                     
             var command = nvi.commandBox(
                     xasprintf(" ./%s", cursor_file), null);

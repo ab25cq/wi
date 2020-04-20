@@ -10,7 +10,7 @@
 impl ViWin version 4
 {
 void forwardWord(ViWin* self) {
-    wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+    var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     wchar_t* p = line + self.cursorX;
 
@@ -205,7 +205,7 @@ void forwardWord(ViWin* self) {
 }
 
 void forwardWord2(ViWin* self) {
-    wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+    var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     wchar_t* p = line + self.cursorX;
 
@@ -369,7 +369,7 @@ void forwardWord2(ViWin* self) {
 
 
 void backwardWord(ViWin* self) {
-    wchar_t* line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+    var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     wchar_t* p = line + self.cursorX;
 

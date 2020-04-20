@@ -33,7 +33,7 @@ all: wi
 #wi: configure Makefile config.h main.nc 01init.o 02base.o 01init.nc 02base.nc 
 #	neo-c -o wi main.nc 01init.o 02base.o $(CFLAGS) $(LIBS)
 wi: configure Makefile config.h main.nc 01init.o 02base.o 03insert_mode.o 04word.o 05undo.o 06file.o 07yank.o 08visual.o 09search.o 10edit.o 11move.o 12command.o 13completion.o 14dot.o 15filer.o 16mark.o 17hvisual.o 18vvisual.o 01init.nc 02base.nc 03insert_mode.nc 04word.nc 05undo.nc 06file.nc 07yank.nc 08visual.nc 09search.nc 10edit.nc 11move.nc 12command.nc 13completion.nc 14dot.nc 15filer.nc 16mark.nc 17hvisual.nc 18vvisual.nc
-	neo-c -o wi main.nc 01init.o 02base.o 03insert_mode.o 04word.o 05undo.o 06file.o 07yank.o 08visual.o 09search.o 10edit.o 11move.o 12command.o 13completion.o 14dot.o 15filer.o 16mark.o 17hvisual.o 18vvisual.o $(CFLAGS) $(LIBS)
+	neo-c -o wi main.nc 01init.o 02base.o 03insert_mode.o 04word.o 05undo.o 06file.o 07yank.o 08visual.o 09search.o 10edit.o 11move.o 12command.o 13completion.o 14dot.o 15filer.o 16mark.o 17hvisual.o 18vvisual.o $(CFLAGS) $(LIBS) $(NCFLAGS)
 
 01init.o: configure Makefile config.h 01init.nc common.h
 	neo-c -c 01init.nc $(CFLAGS) $(NCFLAGS)

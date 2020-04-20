@@ -350,9 +350,7 @@ void inputInsertMode(ViWin* self, Vi* nvi)
         self.backSpace();
     }
     else if(key == 9) {
-        var str = self.texts
-              .item(self.scroll+self.cursorY, null)
-              .substring(0, self.cursorX);
+        var str = self.texts.item(self.scroll+self.cursorY, null).substring(0, self.cursorX);
         if(str.to_string("").match(regex!(/^$|^[ ]+$/), null)) {
             self.insertText(wstring("    "));
         }
@@ -413,8 +411,7 @@ void inputInsertMode(ViWin* self, Vi* nvi)
         if(cursor_y == self.cursorY) {
             int cursor_x2 = self.cursorX;
 
-            var line = self.texts
-                .item(self.scroll+self.cursorY, wstring(""));
+            var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
             line.delete_range(cursor_x2+1, cursor_x+1);
            
             self.texts.replace(self.scroll+self.cursorY
@@ -426,8 +423,7 @@ void inputInsertMode(ViWin* self, Vi* nvi)
             self.cursorY = cursor_y;
             self.cursorX = cursor_x;
             
-            var line = self.texts
-                .item(self.scroll+self.cursorY, wstring(""));
+            var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
             line.delete_range(0, cursor_x+1);
 
             self.texts.replace(self.scroll+self.cursorY
