@@ -4,7 +4,7 @@ vi clone implemented by neo-c
 
 some compatibility for vim
 
-version 0.8.3
+version 0.9.0
 
 / → plain text search
 

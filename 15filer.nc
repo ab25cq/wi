@@ -30,19 +30,22 @@ void textsView(ViWin* self, Vi* nvi)
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
 
-    if(self.texts.length() > 0) {
-        var cursor_line = self.texts.item(self.scroll + self.cursorY, null).printable();
-            
-        int cursor_height = (cursor_line.length() / (maxx-1));
+    var cursor_line = self.texts.item(self.scroll + self.cursorY, null).printable();
         
+    int cursor_height = (wcswidth(cursor_line, cursor_line.length()) / (maxx-1));
+
+    if(self.texts.length() > 0) {
         self.texts
             .sublist(self.scroll, self.scroll+maxy-1)
             .each 
         {
-            var line = it.substring(0, maxx-1);
             var printable_line = it.printable();
-    
-            if(self.cursorY == it2 && nvi.activeWin.equals(self) && !nvi.filer.active) 
+
+            if(it2 > self.cursorY 
+                && it2 <= self.cursorY + cursor_height)
+            {
+            }
+            else if(self.cursorY == it2 && nvi.activeWin.equals(self) && !nvi.filer.active) 
             {
                 if(printable_line.length() == 0) {
                     wattron(self.win, A_REVERSE);
@@ -50,43 +53,33 @@ void textsView(ViWin* self, Vi* nvi)
                     wattroff(self.win, A_REVERSE);
                 }
                 else if(printable_line.length() > maxx-1) {
-                    int cursor_x = self.cursorX % (maxx-1);
-                    int cursor_x_height = self.cursorX / (maxx-1);
-                    
-                    for(int i= 0; i<=cursor_height; i++) {
-                        int head = i * (maxx-1);
-                        int tail = (i+1) * (maxx-1);
-                        var line = printable_line.substring(head, tail);
- 
-                        if(cursor_x_height == i) {
-                            int x = 0;
-                            wstring head_string = line.substring(0, cursor_x);
+                    int x = 0;
+                    int cursor_y = it2;
+                    int cursor_x = 0;
+                    int terminal_width = 0;
+                    while(x < it.length()) {
+                        var c = it.substring(x, x+1).printable();
 
-                            mvwprintw(self.win, it2+i, 0, "%ls", head_string);
-    
-                            x += wcswidth(head_string, head_string.length());
-    
-                            wstring cursor_string = line.substring(cursor_x, cursor_x+1);
-    
+                        if(x == self.cursorX) {
+                            wmove(self.win, cursor_y, cursor_x);
                             wattron(self.win, A_REVERSE);
-                            mvwprintw(self.win, it2+i, x, "%ls", cursor_string);
+                            wprintw(self.win, "%ls", c);
                             wattroff(self.win, A_REVERSE);
-    
-                            x += wcswidth(cursor_string, cursor_string.length());
-    
-                            wstring tail_string = line.substring(cursor_x+1, -1);
-    
-                            mvwprintw(self.win, it2+i, x, "%ls", tail_string);
-                            
-                            if(i < cursor_height) {
-                                wprintw(self.win, "~");
-                            }
                         }
                         else {
-                            mvwprintw(self.win, it2+i, 0, "%ls", line);
-                            if(i < cursor_height) {
-                                wprintw(self.win, "~");
-                            }
+                            wmove(self.win, cursor_y, cursor_x);
+                            wprintw(self.win, "%ls", c);
+                        }
+
+                        x++;
+                        cursor_x += wcswidth(c, c.length());
+                        terminal_width += wcswidth(c, c.length());
+
+                        if(terminal_width >= maxx-1) {
+                            cursor_x = 0;
+                            terminal_width = 0;
+                            cursor_y++;
+                            wprintw(self.win, "~");
                         }
                     }
                     wprintw(self.win, "$");
@@ -94,14 +87,14 @@ void textsView(ViWin* self, Vi* nvi)
                 else {
                     int cursor_x = self.cursorX;
                     int x = 0;
-                    wstring head_string = line.substring(0, cursor_x);
+                    wstring head_string = it.substring(0, cursor_x);
                     wstring printable_head_string = head_string.printable();
 
                     mvwprintw(self.win, it2, 0, "%ls", printable_head_string);
 
                     x += wcswidth(printable_head_string, printable_head_string.length());
 
-                    wstring cursor_string = line.substring(cursor_x, cursor_x+1);
+                    wstring cursor_string = it.substring(cursor_x, cursor_x+1);
                     wstring printable_cursor_string = cursor_string.printable();
 
                     if(printable_cursor_string[0] == '\0') {
@@ -117,18 +110,15 @@ void textsView(ViWin* self, Vi* nvi)
 
                     x += wcswidth(printable_cursor_string, printable_cursor_string.length());
 
-                    wstring tail_string = line.substring(cursor_x+1, -1);
+                    wstring tail_string = it.substring(cursor_x+1, -1);
+                    wstring printable_tail_string = tail_string.printable();
 
-                    mvwprintw(self.win, it2, x, "%ls", tail_string);
+                    mvwprintw(self.win, it2, x, "%ls", printable_tail_string);
                     wprintw(self.win, "$");
                 }
             }
-            else if(it2 > self.cursorY 
-                && it2 <= self.cursorY + cursor_height)
-            {
-            }
             else {
-                mvwprintw(self.win, it2, 0, "%ls", line);
+                mvwprintw(self.win, it2, 0, "%ls", printable_line.substring(0, maxx-1));
                 wprintw(self.win, "$");
             }
         }

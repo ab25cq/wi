@@ -156,6 +156,9 @@ void deleteOnVisualMode(ViWin* self, Vi* nvi) {
 
         self.modifyUnderCursorYValue();
     }
+    
+    self.modifyOverCursorYValue();
+    
 }
 
 void makeInputedKeyGVIndent(ViWin* self, Vi* nvi) {
