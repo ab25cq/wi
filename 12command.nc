@@ -267,7 +267,7 @@ void fileCompetion(ViWin* self, Vi* nvi) {
         closedir(dir);
     }
     
-    var words2 = words.filter { FILE* f = fopen("AAA", "a"); fprintf(f, "it %s word %s\n", it, word); fclose(f); strcmp(word, "") == 0 || strstr(it, word) == it }.sort();
+    var words2 = words.filter { strcmp(word, "") == 0 || strstr(it, word) == it }.sort();
     
     var file_name = self.selector(words2).substring(strlen(word), -1);
     
@@ -346,37 +346,39 @@ void enterComandMode(Vi* self) {
     self.commandString = string("");
 }
 void exitFromComandMode(Vi* self) {
-    if(self.commandString.index("%", -1) != -1) {
-        self.activeWin.subAllTextsFromCommandMode(self);
-        self.mode = kEditMode;
-    }
-    if(self.commandString.index("w", -1) != -1) {
-        self.activeWin.writeFile();
-    }
-    if(self.commandString.index("q", -1) != -1) {
-        bool writed = self.activeWin.writed;
-
-        if(!writed || self.commandString.index("!", -1) != -1) {
-            if(self.wins.length() == 1) {
-                self.appEnd = true;
-            }
-            else {
-                self.closeActiveWin();
-            }
-        }
-    }
-    if(self.commandString.index("shell", -1) != -1) {
-        endwin();
-        
-        (void)system("bash");
-
-        self.init_curses();
-    }
     if(self.commandString.index("sp", -1) == 0) {
         var file_name = self.commandString.scan(regex!("sp \(.+\)")).clone_item(1, null);
 
         if(file_name != null) {
             self.openNewFile(file_name);
+        }
+    }
+    else {
+        if(self.commandString.index("%", -1) != -1) {
+            self.activeWin.subAllTextsFromCommandMode(self);
+            self.mode = kEditMode;
+        }
+        if(self.commandString.index("w", -1) != -1) {
+            self.activeWin.writeFile();
+        }
+        if(self.commandString.index("q", -1) != -1) {
+            bool writed = self.activeWin.writed;
+
+            if(!writed || self.commandString.index("!", -1) != -1) {
+                if(self.wins.length() == 1) {
+                    self.appEnd = true;
+                }
+                else {
+                    self.closeActiveWin();
+                }
+            }
+        }
+        if(self.commandString.index("shell", -1) != -1) {
+            endwin();
+            
+            (void)system("bash");
+
+            self.init_curses();
         }
     }
 

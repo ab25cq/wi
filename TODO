@@ -1,4 +1,3 @@
-view $ wo gyoumatu ni tukeru fukusuu gyou nara ~
 delete last line visual mode seg fault
 wide charater insert text
 sp completion /home/ab25cq/repo/neo-c/src/node.cpp ga hirakenai
@@ -105,3 +104,4 @@ resize terminal
 g/ regex search
 none regex search
 search string saved when finishing
+view $ wo gyoumatu ni tukeru fukusuu gyou nara ~

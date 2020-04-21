@@ -46,7 +46,7 @@ void textsView(ViWin* self, Vi* nvi)
             {
                 if(printable_line.length() == 0) {
                     wattron(self.win, A_REVERSE);
-                    mvwprintw(self.win, it2, 0, " ");
+                    mvwprintw(self.win, it2, 0, "$");
                     wattroff(self.win, A_REVERSE);
                 }
                 else if(printable_line.length() > maxx-1) {
@@ -57,11 +57,11 @@ void textsView(ViWin* self, Vi* nvi)
                         int head = i * (maxx-1);
                         int tail = (i+1) * (maxx-1);
                         var line = printable_line.substring(head, tail);
-                                        
+ 
                         if(cursor_x_height == i) {
                             int x = 0;
                             wstring head_string = line.substring(0, cursor_x);
-    
+
                             mvwprintw(self.win, it2+i, 0, "%ls", head_string);
     
                             x += wcswidth(head_string, head_string.length());
@@ -77,28 +77,33 @@ void textsView(ViWin* self, Vi* nvi)
                             wstring tail_string = line.substring(cursor_x+1, -1);
     
                             mvwprintw(self.win, it2+i, x, "%ls", tail_string);
+                            
+                            if(i < cursor_height) {
+                                wprintw(self.win, "~");
+                            }
                         }
                         else {
                             mvwprintw(self.win, it2+i, 0, "%ls", line);
+                            if(i < cursor_height) {
+                                wprintw(self.win, "~");
+                            }
                         }
                     }
+                    wprintw(self.win, "$");
                 }
                 else {
                     int cursor_x = self.cursorX;
                     int x = 0;
-                    wstring head_string = line.substring(0
-                                        , cursor_x);
-                    wstring printable_head_string 
-                            = head_string.printable();
-    
-                    mvwprintw(self.win, it2, 0, "%ls"
-                            , printable_head_string);
-    
+                    wstring head_string = line.substring(0, cursor_x);
+                    wstring printable_head_string = head_string.printable();
+
+                    mvwprintw(self.win, it2, 0, "%ls", printable_head_string);
+
                     x += wcswidth(printable_head_string, printable_head_string.length());
-    
+
                     wstring cursor_string = line.substring(cursor_x, cursor_x+1);
                     wstring printable_cursor_string = cursor_string.printable();
-    
+
                     if(printable_cursor_string[0] == '\0') {
                         wattron(self.win, A_REVERSE);
                         mvwprintw(self.win, it2, x, " ", printable_cursor_string);
@@ -109,12 +114,13 @@ void textsView(ViWin* self, Vi* nvi)
                         mvwprintw(self.win, it2, x, "%ls", printable_cursor_string);
                         wattroff(self.win, A_REVERSE);
                     }
-    
+
                     x += wcswidth(printable_cursor_string, printable_cursor_string.length());
-    
+
                     wstring tail_string = line.substring(cursor_x+1, -1);
-    
+
                     mvwprintw(self.win, it2, x, "%ls", tail_string);
+                    wprintw(self.win, "$");
                 }
             }
             else if(it2 > self.cursorY 
@@ -123,6 +129,7 @@ void textsView(ViWin* self, Vi* nvi)
             }
             else {
                 mvwprintw(self.win, it2, 0, "%ls", line);
+                wprintw(self.win, "$");
             }
         }
     }

@@ -147,6 +147,7 @@ void openFile(ViWin* self, char* file_name, int line_num)
             self.centeringCursor();
         }
     }
+    
 }
 void writeFile(ViWin* self) {
     FILE* f = fopen(self.fileName, "w");
