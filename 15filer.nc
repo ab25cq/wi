@@ -27,6 +27,7 @@ initialize(int y, int x, int width, int height, Vi* vi) {
 
 void textsView(ViWin* self, Vi* nvi)
 {
+
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
 
@@ -915,6 +916,7 @@ string inputBox(Vi* self, string default_value) {
 }
 
 void view(Vi* self) {
+
     if(self.filer.active) {
         xclear(self.filer.win);
     }

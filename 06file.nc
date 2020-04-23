@@ -30,6 +30,7 @@ void statusBarView(ViWin* self, Vi* nvi)
 
     wrefresh(self.win);
 }
+
 void saveCursorPosition(ViWin* self, char* file_name) {
     char* home = getenv("HOME");
     
@@ -96,6 +97,7 @@ void readCursorPosition(ViWin* self, char* file_name) {
         self.cursorY = 0;
     }
     
+    self.modifyUnderCursorYValue();
     self.modifyOverCursorYValue();
 }
 
@@ -106,7 +108,9 @@ void openFile(ViWin* self, char* file_name, int line_num)
     if(f == null) {
         char cmd[PATH_MAX+128];
         
-        snprintf(cmd, PATH_MAX+128, "touch %s", file_name);
+        snprintf(cmd, PATH_MAX+128, "techo \"\" > %s", file_name);
+
+        self.texts.push_back(wstring(""))
         
         int rc = system(cmd);
         
@@ -134,6 +138,10 @@ void openFile(ViWin* self, char* file_name, int line_num)
 
         fclose(f);
 
+        if(self.texts.length() == 0) {
+            self.texts.push_back(wstring(""))
+        }
+
         self.fileName = string(file_name);
         //self.fileName = "a.txt";
 
@@ -143,12 +151,13 @@ void openFile(ViWin* self, char* file_name, int line_num)
         else {
             self.cursorY = line_num;
             
+            self.modifyUnderCursorYValue();
             self.modifyOverCursorYValue();
             self.centeringCursor();
         }
     }
-    
 }
+
 void writeFile(ViWin* self) {
     FILE* f = fopen(self.fileName, "w");
 
@@ -317,7 +326,7 @@ void openFile(Vi* self, char* file_name, int line_num)
                 self.wins.delete(active_pos);
             }
     
-            int rc = system(xsprintf("touch %s", file_name));
+            int rc = system(xsprintf("echo \"\" > %s", file_name));
             
             if(rc == 0) {
                 var maxx = xgetmaxx();
