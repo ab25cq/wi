@@ -1,3 +1,4 @@
+
 d`a
 C
 C-wj
@@ -105,3 +106,5 @@ view $ wo gyoumatu ni tukeru fukusuu gyou nara ~
 sp completion /home/ab25cq/repo/neo-c/src/node.cpp ga hirakenai
 delete last line visual mode seg fault
 wide charater insert text
+* _も取れるようにする
+# _も取れるようにする

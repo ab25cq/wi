@@ -38,7 +38,7 @@ void forwardWord(ViWin* self) {
 
             line = self.texts.item(self.scroll+self.cursorY, wstring(""));
         }
-
+        
         self.cursorX = 0;
     }
     else if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || *p == '_' || (*p >= '0' && *p <= '9'))

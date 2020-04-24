@@ -126,9 +126,8 @@ void searchWordOnCursor(ViWin* self, Vi* nvi)
     var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     if(self.cursorX < line.length()) {
-        wchar_t* p = line + self.cursorX;
-        
         int cursor_x_before = self.cursorX;
+        wchar_t* p = line + self.cursorX;
 
         if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
         {
@@ -137,26 +136,36 @@ void searchWordOnCursor(ViWin* self, Vi* nvi)
                 p--;
                 self.cursorX--;
             }
+            
+            if(self.cursorX < 0) {
+                self.cursorX = 0;
+                p = line;
+            }
+            else {
+                self.cursorX++;
+                p++;
+            }
+        }
+        
+        int word_head = self.cursorX;
+        
+        if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
+        {
+            while((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
+            {
+                p++;
+                self.cursorX++;
+            }
 
             self.cursorX++;
         }
 
-        int scroll_before = self.scroll;
-        int cursor_y_before = self.cursorY;
-        int cursor_x_before2 = self.cursorX;
+        var search_word = line.substring(word_head, self.cursorX);
+        nvi.searchString = clone search_word;
+        
+        self.cursorX = cursor_x_before;
 
-        self.forwardWord();
-
-        if((cursor_y_before == self.cursorY) && (scroll_before == self.scroll)) 
-        {
-            var search_word = self.texts.item(self.scroll+self.cursorY, null)
-                  .substring(cursor_x_before2, self.cursorX);
-            nvi.searchString = clone search_word;
-            
-            self.cursorX = cursor_x_before;
-
-            self.search(nvi);
-        }
+        self.search(nvi);
     }
 }
 void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
@@ -165,37 +174,44 @@ void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
 
     if(self.cursorX < line.length()) {
         int cursor_x_before = self.cursorX;
-        
         wchar_t* p = line + self.cursorX;
 
-        if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || (*p == '_'))
+        if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
         {
             while((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
             {
                 p--;
                 self.cursorX--;
             }
+            
+            if(self.cursorX < 0) {
+                self.cursorX = 0;
+                p = line;
+            }
+            else {
+                self.cursorX++;
+                p++;
+            }
+        }
+        
+        int word_head = self.cursorX;
+        
+        if((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
+        {
+            while((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_')
+            {
+                p++;
+                self.cursorX++;
+            }
 
             self.cursorX++;
         }
 
-        int scroll_before = self.scroll;
-        int cursor_y_before = self.cursorY;
-        int cursor_x_before2 = self.cursorX;
-
-        self.forwardWord();
-
-        if((cursor_y_before == self.cursorY) && (scroll_before == self.scroll)) 
-        {
-            var search_word 
-                = self.texts.item(self.scroll+self.cursorY, null)
-                 .substring(cursor_x_before2, self.cursorX);
-            nvi.searchString = clone search_word;
-            
-            self.cursorX = cursor_x_before;
-
-            self.searchReverse(nvi);
-        }
+        var search_word = line.substring(word_head, self.cursorX);
+        nvi.searchString = clone search_word;
+        
+        self.cursorX = cursor_x_before;
+        self.searchReverse(nvi);
     }
 }
 
