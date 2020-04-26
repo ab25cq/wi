@@ -1,4 +1,6 @@
-
+C-w j, k
+visual mode zz
+search mode in visual mode
 d`a
 C
 C-wj
