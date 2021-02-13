@@ -68,6 +68,7 @@ impl ViWin version 2
     void modifyOverCursorYValue(ViWin* self);
     void modifyUnderCursorYValue(ViWin* self);
     void modifyOverCursorXValue(ViWin* self);
+    void modifyOverCursorXValueOnInsertMode(ViWin* self);
     void modifyUnderCursorXValue(ViWin* self);
 
     void forward(ViWin* self);
@@ -149,6 +150,7 @@ impl Vi version 3
     initialize();
 
     void enterInsertMode(Vi* self);
+    void enterInsertMode2(Vi* self);
     void exitFromInsertMode(Vi* self);
     int main_loop(Vi* self);
 }

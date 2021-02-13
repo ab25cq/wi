@@ -1,33 +1,3 @@
-iiiiabacabcccc xxxx    11111 aaaa bbbb ccc
-efccc
-
- aaa_aaa
- aaa_aaa
-
-:
-aaaaaabcdef
-        asdfsaadf
-        asdfadsaf
-            
-hicccaaaaaaaaa11111a
-1111aaaa =    aaaa23ccc
-1111aaaxxx    bbbcccddddeeefffggghhhiii56ccc
-                    llaaaa
-bbb
-aaaaaaaaaaaaaaacccbbb*
-aaaccc1
-*
-*
-*
-
-
-
-
-
-
-
-
-
-/
-
-*/
+aaa aaa
+bbb bbbb
+ccc bbbb

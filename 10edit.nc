@@ -15,6 +15,33 @@ void modifyCursorOnDeleting(ViWin* self) {
     self.modifyOverCursorXValue();
 }
 
+void modifyOverCursorXValue2(ViWin* self){
+    if(self.texts.length() == 0) {
+        self.scroll = 0;
+        self.cursorY = 0;
+        self.cursorX = 0;
+    }
+    else {
+        var cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+
+        if(cursor_line) {
+            if(self.cursorX >= cursor_line.length())
+            {
+                self.cursorX = cursor_line.length();
+
+                if(self.cursorX < 0) {
+                    self.cursorX = 0;
+                }
+            }
+        }
+    }
+}
+
+void modifyCursorOnDeleting2(ViWin* self) {
+    self.modifyOverCursorYValue();
+    self.modifyOverCursorXValue2();
+}
+
 void deleteOneLine(ViWin* self, Vi* nvi) {
     if(self.digitInput > 0) {
         self.pushUndo();
@@ -166,7 +193,7 @@ void deleteWord(ViWin* self, Vi* nvi) {
             nvi.yankKind = kYankKindNoLine;
             line.delete_range(self.cursorX, x);
     
-            self.modifyCursorOnDeleting();
+            self.modifyCursorOnDeleting2();
         }
         
         self.digitInput = 0;
@@ -247,7 +274,7 @@ void deleteWord(ViWin* self, Vi* nvi) {
             nvi.yankKind = kYankKindNoLine;
             line.delete_range(self.cursorX, x);
     
-            self.modifyCursorOnDeleting();
+            self.modifyCursorOnDeleting2();
         }
     }
 }
@@ -413,8 +440,9 @@ void deleteCursorCharactor(ViWin* self) {
 void replaceCursorCharactor(ViWin* self) {
     self.pushUndo();
     
-    var key = self.getKey(true);
+    var key = self.getKey(false);
     
+/*
     if(self.digitInput > 0) {
         int num = self.digitInput + 1;
         
@@ -427,9 +455,10 @@ void replaceCursorCharactor(ViWin* self) {
         self.digitInput = 0;
     }
     else {
+*/
         var line = self.texts.item(self.scroll+self.cursorY, null);
         line.replace(self.cursorX, (wchar_t)key);
-    }
+//    }
 }
 
 void deleteUntilTail(ViWin* self) {
@@ -753,10 +782,11 @@ initialize() {
                 
                 
             case 'w':
-            case 'e':
+            case 'e': {
                 self.activeWin.deleteWord(self);
-                self.enterInsertMode();
+                self.enterInsertMode2();
                 self.activeWin.writed = true;
+                }
                 break;
                 
             case 't':

@@ -1,3 +1,5 @@
+r5
+
 C-w j, k
 visual mode zz
 search mode in visual mode
@@ -110,3 +112,5 @@ delete last line visual mode seg fault
 wide charater insert text
 * _も取れるようにする
 # _も取れるようにする
+行末cw
+modifyOverCursorXInsertModeを作る。

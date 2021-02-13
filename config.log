@@ -14,7 +14,7 @@ hostname = clover-lang.org
 uname -m = x86_64
 uname -r = 4.19.0-8-amd64
 uname -s = Linux
-uname -v = #1 SMP Debian 4.19.98-1 (2020-01-26)
+uname -v = #1 SMP Debian 4.19.98-1+deb10u1 (2020-04-27)
 
 /usr/bin/uname -p = unknown
 /bin/uname -X     = unknown
@@ -450,7 +450,6 @@ on clover-lang.org
 
 config.status:810: creating Makefile
 config.status:810: creating config.h
-config.status:985: config.h is unchanged
 
 ## ---------------- ##
 ## Cache variables. ##
