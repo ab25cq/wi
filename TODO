@@ -1,43 +1,33 @@
-visual mode zz
 search mode in visual mode
-d`a
-C
-C-wj
-C-wk
-V,c
-V,C
-V,J
-V,=
-V,A
-V,r
-e
+C-a,digit incremrnt
+s
+S
+X
+I
 f,;
 f,(,)
--
-+
 _
-
 H
 L
-C-y
-C-b
-C-e
 C-f
+e
 z(enter)
 zt
 zb
 z-
 zz
 z.
-s
-S
-X
-I
-C-a,digit incremrnt
+d`a
+V,c
+V,C
+V,J
+V,=
+V,A
+V,r
+
 C-x
 R
 V,$
-gv
 V~
 V,:
 [{
@@ -48,9 +38,6 @@ V,:
 [*
 ]*
 ]/
-
-
-
 #if %
 external command
 ------
@@ -115,3 +102,16 @@ r5
 C-w j, k
 no copy to clipbord on deleting
 save yank
+case 'z': 
+                self.keyZ(nvi);
+                break;
+?
+gv
+C
+C-wj
+C-wk
+-
++
+C-y
+C-e
+C-b

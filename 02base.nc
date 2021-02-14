@@ -227,10 +227,44 @@ void halfScrollUp(ViWin* self) {
     self.modifyOverCursorXValue();
 }
 
+void onelineScrollUp(ViWin* self) {
+    int maxy = getmaxy(self.win);
+
+    self.scroll --;
+    
+    if(self.scroll < 0) {
+        self.scroll = 0;
+    }
+
+    self.modifyUnderCursorYValue();
+    self.modifyOverCursorXValue();
+}
+void onelineScrollDown(ViWin* self) {
+    int maxy = getmaxy(self.win);
+
+    self.scroll++;
+    
+    if(self.scroll >= self.texts.length()) {
+        self.scroll = self.texts.length()-1;
+    }
+
+    self.modifyOverCursorYValue();
+    self.modifyOverCursorXValue();
+}
+
 void halfScrollDown(ViWin* self) {
     int maxy = getmaxy(self.win);
 
     self.cursorY += maxy/2;
+
+    self.modifyOverCursorYValue();
+    self.modifyOverCursorXValue();
+}
+
+void onePageScrollDown(ViWin* self) {
+    int maxy = getmaxy(self.win);
+
+    self.cursorY += maxy;
 
     self.modifyOverCursorYValue();
     self.modifyOverCursorXValue();
@@ -303,12 +337,34 @@ void keyG(ViWin* self, Vi* nvi) {
             break;
             
         case '/':
-            nvi.enterSearchMode(true);
+            nvi.enterSearchMode(true, false);
+            break;
+            
+            
+        case '?':
+            nvi.enterSearchMode(true, true);
             break;
             
             
         case 'J':
             self.joinLines2();
+            break;
+    }
+}
+
+void keyZ(ViWin* self, Vi* nvi)
+{
+    var key2 = self.getKey(false);
+
+    switch(key2) {
+        case 'z':
+            self.centeringCursor();
+            self.saveInputedKeyOnTheMovingCursor();
+            break;
+            
+        case '\n':
+            self.topCursor();
+            self.saveInputedKeyOnTheMovingCursor();
             break;
     }
 }
@@ -444,6 +500,11 @@ initialize() {
         self.activeWin.halfScrollDown();
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
+    self.events.replace('F'-'A'+1, lambda(Vi* self, int key) 
+    {
+        self.activeWin.onePageScrollDown();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
     self.events.replace('U'-'A'+1, lambda(Vi* self, int key) 
     {
         self.activeWin.halfScrollUp();
@@ -452,6 +513,16 @@ initialize() {
     self.events.replace('L'-'A'+1, lambda(Vi* self, int key) 
     {
         self.clearView();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('Y'-'A'+1, lambda(Vi* self, int key) 
+    {
+        self.activeWin.onelineScrollUp();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('E'-'A'+1, lambda(Vi* self, int key) 
+    {
+        self.activeWin.onelineScrollDown();
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('g', lambda(Vi* self, int key) 
@@ -466,19 +537,7 @@ initialize() {
     });
     self.events.replace('z', lambda(Vi* self, int key) 
     {
-        var key2 = self.activeWin.getKey(false);
-
-        switch(key2) {
-            case 'z':
-                self.activeWin.centeringCursor();
-                self.activeWin.saveInputedKeyOnTheMovingCursor();
-                break;
-                
-            case '\n':
-                self.activeWin.topCursor();
-                self.activeWin.saveInputedKeyOnTheMovingCursor();
-                break;
-        }
+        self.activeWin.keyZ(self);
     });
     self.events.replace('Z', lambda(Vi* self, int key) 
     {
@@ -543,7 +602,7 @@ void repositionFiler(Vi* self)
 {
     /// implemented by the after layer
 }
-void enterSearchMode(Vi* self, bool regex_search)
+void enterSearchMode(Vi* self, bool regex_search, bool reverse_search)
 {
     /// implemented by the after layer
 }

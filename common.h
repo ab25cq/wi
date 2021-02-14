@@ -82,6 +82,7 @@ impl ViWin version 2
 
     void moveTop(ViWin* self);
     void keyG(ViWin* self,Vi* nvi);
+    void keyZ(ViWin* self, Vi* nvi);
     void moveBottom(ViWin* self);
 
     void repositionWindows(Vi* self);
@@ -93,6 +94,7 @@ impl ViWin version 2
     void restoreVisualMode(ViWin* self, Vi* nvi);
     
     void joinLines2(ViWin* self);
+    void topCursor(ViWin* self);
 }
 
 struct Vi version 2 
@@ -117,7 +119,7 @@ impl Vi version 2
     void view(Vi* self);
     void clearView(Vi* self);
     void exitFromApp(Vi* self);
-    void enterSearchMode(Vi* self, bool regex_search);
+    void enterSearchMode(Vi* self, bool regex_search, bool reverse_search);
 }
 
 /// 3insert_mode.h ///
@@ -295,6 +297,7 @@ struct Vi version 9
 {
     wstring searchString;
     bool regexSearch;
+    bool reverseSearch;
 };
 
 impl ViWin version 9
@@ -311,7 +314,7 @@ impl ViWin version 9
 
 impl Vi version 9
 {
-    void enterSearchMode(Vi* self, bool regex_search);
+    void enterSearchMode(Vi* self, bool regex_search, bool reverse_search);
     void exitFromSearchMode(Vi* self);
 
     initialize();

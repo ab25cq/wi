@@ -238,6 +238,10 @@ void inputVerticalVisualMode(ViWin* self, Vi* nvi){
             case 27:
                 nvi.exitFromVisualMode();
                 break;
+                
+            case 'z': 
+                self.keyZ(nvi);
+                break;
         }
     }
 }

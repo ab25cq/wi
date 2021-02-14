@@ -19,7 +19,12 @@ void searchModeView(ViWin* self, Vi* nvi)
     self.textsView(nvi);
 
     wattron(self.win, A_REVERSE);
-    mvwprintw(self.win, self.height-1, 0, "/%ls", nvi.searchString);
+    if(nvi.reverseSearch) {
+        mvwprintw(self.win, self.height-1, 0, "?%ls", nvi.searchString);
+    }
+    else {
+        mvwprintw(self.win, self.height-1, 0, "/%ls", nvi.searchString);
+    }
     wattroff(self.win, A_REVERSE);
 
     //wrefresh(self.win);
@@ -170,6 +175,7 @@ void searchWordOnCursor(ViWin* self, Vi* nvi)
 }
 void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
 {
+    nvi.reverseSearch = true;
     var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     if(self.cursorX < line.length()) {
@@ -229,8 +235,14 @@ void inputSearchlMode(ViWin* self, Vi* nvi)
             break;
 
         case 10:
-            self.search(nvi);
-            nvi.exitFromSearchMode();
+            if(nvi.reverseSearch) {
+                self.searchReverse(nvi);
+                nvi.exitFromSearchMode();
+            }
+            else {
+                self.search(nvi);
+                nvi.exitFromSearchMode();
+            }
             break;
             
         case 8:
@@ -320,10 +332,11 @@ void readSearchString(Vi* self, char* file_name) {
     self.searchString = wstring(line);
 }
 
-void enterSearchMode(Vi* self, bool regex_search) {
+void enterSearchMode(Vi* self, bool regex_search, bool reverse_search) {
     self.mode = kSearchMode;
     self.searchString = wstring("");
     self.regexSearch = regex_search;
+    self.reverseSearch = reverse_search;
 }
 void exitFromSearchMode(Vi* self) {
     self.mode = kEditMode;
@@ -336,18 +349,35 @@ initialize() {
 
     self.events.replace('/', lambda(Vi* self, int key) 
     {
-        self.enterSearchMode(false);
+        self.enterSearchMode(false, false);
+    });
+
+    self.events.replace('?', lambda(Vi* self, int key) 
+    {
+        self.enterSearchMode(false, true);
     });
 
     self.events.replace('n', lambda(Vi* self, int key) 
     {
-        self.activeWin.search(self);
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
+        if(self.reverseSearch) {
+            self.activeWin.searchReverse(self);
+            self.activeWin.saveInputedKeyOnTheMovingCursor();
+        }
+        else {
+            self.activeWin.search(self);
+            self.activeWin.saveInputedKeyOnTheMovingCursor();
+        }
     });
     self.events.replace('N', lambda(Vi* self, int key) 
     {
-        self.activeWin.searchReverse(self);
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
+        if(self.reverseSearch) {
+            self.activeWin.search(self);
+            self.activeWin.saveInputedKeyOnTheMovingCursor();
+        }
+        else {
+            self.activeWin.searchReverse(self);
+            self.activeWin.saveInputedKeyOnTheMovingCursor();
+        }
     });
     self.events.replace('*', lambda(Vi* self, int key) 
     {

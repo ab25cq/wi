@@ -46,16 +46,14 @@ void deleteOneLine(ViWin* self, Vi* nvi) {
     if(self.digitInput > 0) {
         self.pushUndo();
         
-/*
         nvi.yank.reset();
         nvi.yankKind = kYankKindLine;
-*/
         
         for(int i=0; i<self.digitInput+1; i++) {
             var line = self.texts.item(self.scroll+self.cursorY, null);
             
             if(line != null) {
-//                nvi.yank.push_back(clone line);
+                nvi.yank.push_back(clone line);
                 
                 self.texts.delete(self.scroll+self.cursorY);
         
@@ -69,11 +67,9 @@ void deleteOneLine(ViWin* self, Vi* nvi) {
         var line = self.texts.item(self.scroll+self.cursorY, null);
         if(line != null) {
             self.pushUndo();
-/*
             nvi.yank.reset();
             nvi.yank.push_back(clone line);
             nvi.yankKind = kYankKindLine;
-*/
             self.texts.delete(self.scroll+self.cursorY);
     
             self.modifyCursorOnDeleting();
@@ -85,16 +81,14 @@ void deleteOneLine2(ViWin* self, Vi* nvi) {
     if(self.digitInput > 0) {
         self.pushUndo();
         
-/*
         nvi.yank.reset();
         nvi.yankKind = kYankKindLine;
-*/
         
         for(int i=0; i<self.digitInput+1; i++) {
             var line = self.texts.item(self.scroll+self.cursorY, null);
             
             if(line != null) {
-//                nvi.yank.push_back(clone line);
+                nvi.yank.push_back(clone line);
                 
                 self.texts.delete(self.scroll+self.cursorY);
         
@@ -881,6 +875,18 @@ initialize() {
     self.events.replace('^', lambda(Vi* self, int key) {
         self.activeWin.moveToHead();
 
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('+', lambda(Vi* self, int key) 
+    {
+        self.activeWin.nextLine();
+        self.activeWin.moveToHead();
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('-', lambda(Vi* self, int key) 
+    {
+        self.activeWin.prevLine();
+        self.activeWin.moveToHead();
         self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
 }

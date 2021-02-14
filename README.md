@@ -12,7 +12,7 @@ g/ → regex search
 
 C-F → open the side bar(filer mode)
 
-This program does not paste to yank when deleting text
+This program does not paste to yank when deleting text except dd
 
 In The Side Bar
 
