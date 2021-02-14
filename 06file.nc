@@ -186,6 +186,20 @@ void toggleWin(Vi* self) {
         self.toggleWin = toggle_win;
     }
 }
+void upWin(Vi* self) {
+    int toggle_win = self.wins.find(self.activeWin, -1);
+    if(toggle_win-1 >= 0 && toggle_win-1 < self.wins.length()) {
+        self.activeWin = self.wins.item(toggle_win-1, null);
+        self.toggleWin = toggle_win;
+    }
+}
+void downWin(Vi* self) {
+    int toggle_win = self.wins.find(self.activeWin, -1);
+    if(toggle_win+1 >= 0 && toggle_win+1 < self.wins.length()) {
+        self.activeWin = self.wins.item(toggle_win+1, null);
+        self.toggleWin = toggle_win;
+    }
+}
 
 initialize() {
     inherit(self);
@@ -197,6 +211,12 @@ initialize() {
         switch(key2) {
             case 'W'-'A'+1:
                 self.toggleWin();
+                break;
+            case 'j':
+                self.downWin();
+                break;
+            case 'k':
+                self.upWin();
                 break;
         }
     });

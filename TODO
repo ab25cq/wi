@@ -1,6 +1,4 @@
-r5
-
-C-w j, k
+no copy to clipbord on deleting
 visual mode zz
 search mode in visual mode
 d`a
@@ -110,7 +108,9 @@ view $ wo gyoumatu ni tukeru fukusuu gyou nara ~
 sp completion /home/ab25cq/repo/neo-c/src/node.cpp ga hirakenai
 delete last line visual mode seg fault
 wide charater insert text
-* _も取れるようにする
-# _も取れるようにする
-行末cw
-modifyOverCursorXInsertModeを作る。
+
+
+
+
+r5
+C-w j, k
