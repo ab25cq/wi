@@ -12,6 +12,8 @@ g/ → regex search
 
 C-F → open the side bar(filer mode)
 
+This program does not paste to yank when deleting text
+
 In The Side Bar
 
 enter → write the file of current window and open the cursor file
