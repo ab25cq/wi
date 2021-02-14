@@ -1,4 +1,3 @@
-no copy to clipbord on deleting
 visual mode zz
 search mode in visual mode
 d`a
@@ -114,3 +113,5 @@ wide charater insert text
 
 r5
 C-w j, k
+no copy to clipbord on deleting
+save yank

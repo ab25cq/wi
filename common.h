@@ -246,6 +246,7 @@ struct Vi version 7
 impl Vi version 7 
 {
     initialize();
+    finalize();
 }
 
 /// 8visual.h ///
