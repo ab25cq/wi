@@ -1,5 +1,6 @@
+wi file_name +n
+
 search mode in visual mode
-C-a,digit incremrnt
 s
 S
 X
@@ -115,3 +116,4 @@ C-wk
 C-y
 C-e
 C-b
+C-a,digit incremrnt

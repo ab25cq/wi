@@ -450,6 +450,7 @@ on clover-lang.org
 
 config.status:810: creating Makefile
 config.status:810: creating config.h
+config.status:985: config.h is unchanged
 
 ## ---------------- ##
 ## Cache variables. ##

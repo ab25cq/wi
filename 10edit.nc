@@ -707,6 +707,83 @@ void changeCase(ViWin* self) {
     }
 }
 
+void incrementDigit(ViWin* self) {
+    self.pushUndo();
+
+    var line = self.texts.item(self.scroll+self.cursorY, null);
+    
+    if(self.digitInput > 0) {
+        wchar_t c = line.item(self.cursorX, -1);
+        
+        if(c != -1) {
+            if(c >= '0' && c <= '9') {
+                int head = self.cursorX;
+                while(c >= '0' && c <= '9') {
+                    c = line.item(head, -1);
+                    head--;
+                }
+                head++;
+                
+                c = line.item(self.cursorX, -1);
+                
+                int tail = self.cursorX;
+                while(c >= '0' && c <= '9') {
+                    c = line.item(tail, -1);
+                    tail++;
+                }
+                
+                string digits = line.substring(head, tail).to_string("");
+                
+                int value = atoi(digits);
+                
+                value += self.digitInput + 1;
+                
+                var line2 = line.substring(0, head+1) + xsprintf("%d", value).to_wstring() + line.substring(tail, -1);
+                
+                self.texts.replace(self.scroll+self.cursorY, line2);
+            }
+        }
+        
+        self.digitInput = 0;
+    }
+    else {
+        wchar_t c = line.item(self.cursorX, -1);
+        
+        if(c != -1) {
+            if(c >= '0' && c <= '9') {
+                int head = self.cursorX;
+                while(c >= '0' && c <= '9') {
+                    head--;
+                    c = line.item(head, -1);
+                }
+                head++;
+                
+                if(head < 0) {
+                    head = 0;
+                }
+                
+                c = line.item(self.cursorX, -1);
+                
+                int tail = self.cursorX;
+                while(c >= '0' && c <= '9') {
+                    tail++;
+                    c = line.item(tail, -1);
+                }
+                
+                string digits = line.substring(head, tail).to_string("");
+                
+                int value = atoi(digits);
+                
+                value ++;
+                
+                var line2 = line.substring(0, head) + xsprintf("%d", value).to_wstring() + line.substring(tail, -1);
+                
+                self.texts.replace(self.scroll+self.cursorY, line2);
+            }
+        }
+    }
+}
+
 void moveToHead(ViWin* self) {
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
@@ -888,6 +965,12 @@ initialize() {
         self.activeWin.prevLine();
         self.activeWin.moveToHead();
         self.activeWin.saveInputedKeyOnTheMovingCursor();
+    });
+    self.events.replace('A'-'A'+1, lambda(Vi* self, int key) 
+    {
+        self.activeWin.incrementDigit();
+
+        self.activeWin.saveInputedKey();
     });
 }
 }
