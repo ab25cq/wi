@@ -409,27 +409,23 @@ void inputInsertMode(ViWin* self, Vi* nvi)
         self.backwardWord();
         
         if(cursor_y == self.cursorY) {
-            int cursor_x2 = self.cursorX;
-
             var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
-            line.delete_range(cursor_x2+1, cursor_x+1);
-           
-            self.texts.replace(self.scroll+self.cursorY
-                            , clone line);
+            line.delete_range(self.cursorX, cursor_x+1);
+         
+            self.texts.replace(self.scroll+self.cursorY, clone line);
             self.modifyOverCursorXValue();
             self.cursorX++;
         }
         else {
             self.cursorY = cursor_y;
-            self.cursorX = cursor_x;
-            
             var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
+            
             line.delete_range(0, cursor_x+1);
-
-            self.texts.replace(self.scroll+self.cursorY
-                            , clone line);
+            
+            self.texts.replace(self.scroll+self.cursorY, clone line);
                             
-            self.modifyOverCursorXValue();
+            self.cursorX = 0;
+            self.cursorY = cursor_y;
         }
     }
     else if(key == 'V'-'A'+1) {
@@ -486,7 +482,7 @@ void enterInsertMode(Vi* self) {
 void enterInsertMode2(Vi* self) {
     self.mode = kInsertMode;
     self.activeWin.writedFlagOn();
-    self.activeWin.modifyOverCursorXValueOnInsertMode();
+    self.activeWin.modifyOverCursorXValue2();
 }
 void exitFromInsertMode(Vi* self) {
     self.mode = kEditMode;

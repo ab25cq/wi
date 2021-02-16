@@ -12,8 +12,6 @@ g/ → regex search
 
 C-F → open the side bar(filer mode)
 
-This program does not paste to yank when deleting text except dd
-
 In The Side Bar
 
 enter → write the file of current window and open the cursor file
@@ -37,3 +35,16 @@ n → next the searching files
 N → preve the searching files
 
 C-c, C-f → return the editor
+
+* Command mode
+
+run sevenstar shell.
+
+wq,qw ---> write file and close win or exit application.
+q --> close win or exit application.
+texts() --> return list<string> of editor texts. In the vidual mode, return list<string> of seleted texts
+sp [path]--> open texts in the new window
+
+If there is a result of shell, pasted texts to the editor. Only the case is string type or list<string> type.
+
+

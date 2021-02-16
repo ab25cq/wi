@@ -1,3 +1,5 @@
+make distclean
+
 ./configure --with-optimize
-make
+make 
 sudo make install

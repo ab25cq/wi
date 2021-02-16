@@ -77,7 +77,7 @@ then
 else
     echo other
 
-    AC_DEFINE(__32BIT_CPU__, 1)
+    AC_DEFINE(__64BIT_CPU__, 1)
 fi
 
 #########################################
@@ -88,7 +88,7 @@ AC_MSG_CHECKING(Operating System)
 #########################################
 # CFLAGS settings
 #########################################
-CFLAGS=""
+CFLAGS="-I."
 NCFLAGS=""
 if test $DEBUGGING = 1
 then
@@ -125,15 +125,18 @@ AC_CHECK_HEADER(math.h, [AC_DEFINE(HAVE_MATH_H,1)], [])
 AC_HAVE_LIBRARY(m, [ LIBS="$LIBS -lm"; ], [])
 AC_CHECK_HEADER(iconv.h, [AC_DEFINE(HAVE_ICONV_H, 1)], [])
 
-if test "$OS" = CYGWIN || test "$OS" = DARWIN || test "$OS" = FREEBSD
-then
-    LIBS="$LIBS -liconv"
-fi
-
 AC_CHECK_HEADER(pcre.h, [AC_DEFINE(HAVE_PCRE_H,1)], [])
 AC_HAVE_LIBRARY(pcre, [ LIBS="$LIBS -lpcre"; ], [ eixt ])
-AC_CHECK_HEADER(ncurses.h, [AC_DEFINE(HAVE_NCURSESW_H, 1)], [])
-AC_HAVE_LIBRARY(ncursesw, [ LIBS="$LIBS -lncursesw"; ], [])
+
+if test `uname -s` = "Darwin"; then
+    AC_CHECK_HEADER(ncurses.h, [AC_DEFINE(HAVE_NCURSESW_H, 1)], [])
+    AC_HAVE_LIBRARY(ncurses, [ LIBS="$LIBS -lncurses"; ], [])
+else
+    AC_CHECK_HEADER(ncurses.h, [AC_DEFINE(HAVE_NCURSESW_H, 1)], [])
+    AC_HAVE_LIBRARY(ncursesw, [ LIBS="$LIBS -lncursesw"; ], [])
+fi
+AC_CHECK_HEADER(readline/readline.h, [AC_DEFINE(HAVE_READLINE_H, 1)], [])
+AC_HAVE_LIBRARY(readline, [ LIBS="$LIBS -lreadline"; ], [])
 
 AC_HAVE_LIBRARY(rt, [ LIBS="$LIBS -lrt"; ], [])
 

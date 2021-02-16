@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3-10_array</title>
+<link href="../../_common/images/favicon.ico" rel="shortcut icon">
+<link href="https://fonts.googleapis.com/css?family=M+PLUS+1p:400,500" rel="stylesheet">
+<link href="../../_common/css/style.css" rel="stylesheet">
+</head>
+<body>
+<header>
+<div class="container">
+<h1>項目をリスト表示する</h1>
+<h2>項目をHTMLに出力する</h2>
+</div><!-- /.container -->
+</header>
+<main>
+<div class="container">
+<section>
+    <h1>やることリスト</h1>
+    <ul id="list">
+    </ul>
+</section>
+</div><!-- /.container -->
+</main>
+<footer>
+<div class="container">
+<p>JavaScript Samples</p>
+</div><!-- /.container -->
+</footer>
+<script>
+'use strict';
+
+let todo = ['デザインカンプ作成', 'データ整理', '勉強会申し込み', '牛乳買う'];
+todo.push('歯医者に行く');
+for(let item of todo) {
+    const li = `<li>${item}</li>`;
+    document.getElementById('list').insertAdjacentHTML('beforeend', li);
+}
+</script>
+</body>
+</html>

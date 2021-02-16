@@ -1,36 +1,5 @@
-wi file_name +n
-
-search mode in visual mode
-s
-S
-X
-I
-f,;
-f,(,)
-_
-H
-L
-C-f
-e
-z(enter)
-zt
-zb
-z-
-zz
-z.
-d`a
-V,c
-V,C
-V,J
-V,=
-V,A
-V,r
-
+visual mode drawing will use 15filer.nc's.
 C-x
-R
-V,$
-V~
-V,:
 [{
 [M
 ]m
@@ -40,18 +9,14 @@ V,:
 ]*
 ]/
 #if %
-external command
-------
-C-i include
-gd
-g5
 C-F
-:make
-
-
-
-
 C-t, ]]
+blink paren
+color
+line number
+C-i include
+:make
+save /tmp tmp texts
 ------------------------------------------------------------
 :%s//
 ta, fa,dta, cta
@@ -95,25 +60,67 @@ view $ wo gyoumatu ni tukeru fukusuu gyou nara ~
 sp completion /home/ab25cq/repo/neo-c/src/node.cpp ga hirakenai
 delete last line visual mode seg fault
 wide charater insert text
-
-
-
-
-r5
+* _
+# _
+--------
+CTRL-Z
+when deleting all texts, occurs segmentation falt
+yank save when finishing
+cursor in last chararacter is unvisible
 C-w j, k
-no copy to clipbord on deleting
-save yank
-case 'z': 
-                self.keyZ(nvi);
-                break;
-?
-gv
-C
+C-w,w
 C-wj
 C-wk
+V,c
+V,C
+C-V,C
+v,C
+V,J
+V,=
+V,A
+V,r
+v,r
+C-V,r
+?
+e
+inseart mode C-w
+search mode C-w
+visual mode arrow key
+f,;
+f,(,)
 -
 +
+_
+H
+L
 C-y
 C-e
+z(enter)
+zt
+zz
+z.
 C-b
+C-f
+zb
+z-
+s
+S
+R
+X
+I
 C-a,digit incremrnt
+R
+C-V,$
+V~
+C-V~
+v~
+gv
+backup 
+command mode for shell. 
+V,:
+V,:
+gd
+g5
+external command
+commnad mode
+command mode ---> run sevenstar shell

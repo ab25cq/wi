@@ -97,8 +97,8 @@ void forwardWord(ViWin* self) {
             }
         }
     }
-    else if(iswalpha(*p)) {
-        while(iswalpha(*p)) {
+    else if(xiswalpha(*p)) {
+        while(xiswalpha(*p)) {
             p++;
             self.cursorX++;
 
@@ -123,8 +123,8 @@ void forwardWord(ViWin* self) {
             }
         }
     }
-    else if(iswblank(*p)) {
-        while(iswblank(*p)) {
+    else if(xiswblank(*p)) {
+        while(xiswblank(*p)) {
             p++;
             self.cursorX++;
 
@@ -149,8 +149,8 @@ void forwardWord(ViWin* self) {
             }
         }
     }
-    else if(iswdigit(*p)) {
-        while(iswdigit(*p)) {
+    else if(xiswdigit(*p)) {
+        while(xiswdigit(*p)) {
             p++;
             self.cursorX++;
 
@@ -176,8 +176,8 @@ void forwardWord(ViWin* self) {
         }
     }
     
-    if(iswblank(*p)) {
-        while(iswblank(*p)) {
+    if(xiswblank(*p)) {
+        while(xiswblank(*p)) {
             p++;
             self.cursorX++;
 
@@ -307,8 +307,8 @@ void forwardWord2(ViWin* self) {
                 self.cursorX = 0;
             }
         }
-        else if(iswblank(*p)) {
-            while(iswblank(*p)) {
+        else if(xiswblank(*p)) {
+            while(xiswblank(*p)) {
                 p++;
                 self.cursorX++;
     
@@ -333,8 +333,8 @@ void forwardWord2(ViWin* self) {
                 }
             }
         }
-        else if(iswdigit(*p)) {
-            while(iswdigit(*p)) {
+        else if(xiswdigit(*p)) {
+            while(xiswdigit(*p)) {
                 p++;
                 self.cursorX++;
     
@@ -475,8 +475,8 @@ void backwardWord(ViWin* self) {
             }
         }
     }
-    else if(iswalpha(*p)) {
-        while(iswalpha(*p)) {
+    else if(xiswalpha(*p)) {
+        while(xiswalpha(*p)) {
             p--;
             self.cursorX--;
 
@@ -509,8 +509,8 @@ void backwardWord(ViWin* self) {
             }
         }
     }
-    else if(iswdigit(*p)) {
-        while(iswdigit(*p)) {
+    else if(xiswdigit(*p)) {
+        while(xiswdigit(*p)) {
             p--;
             self.cursorX--;
 
@@ -543,8 +543,8 @@ void backwardWord(ViWin* self) {
             }
         }
     }
-    else if(iswblank(*p)) {
-        while(iswblank(*p)) {
+    else if(xiswblank(*p)) {
+        while(xiswblank(*p)) {
             p--;
             self.cursorX--;
 

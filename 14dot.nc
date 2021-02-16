@@ -2,11 +2,55 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <locale.h>
 #include <wctype.h>
+#include <termios.h>
+#include <signal.h>
 
 #include "common.h"
+
+void mreset_tty()
+{
+    struct termios t;
+
+    t.c_cc[VINTR] =  3;
+    t.c_cc[VQUIT] =  28;
+    t.c_cc[VERASE] =  127;
+    t.c_cc[VKILL] =  21;
+    t.c_cc[VEOF] =  4;
+    t.c_cc[VTIME] =  0;
+    t.c_cc[VMIN] =  1;
+#if defined(VSWTC)
+    t.c_cc[VSWTC] =  0;
+#endif
+    t.c_cc[VSTART] =  17;
+    t.c_cc[VSTOP] =  19;
+    t.c_cc[VSUSP] =  26;
+    t.c_cc[VEOL] =  0;
+    t.c_cc[VREPRINT] =  18;
+    t.c_cc[VDISCARD] =  15;
+    t.c_cc[VWERASE] =  23;
+    t.c_cc[VLNEXT] =  22;
+    t.c_cc[VEOL2] =  0;
+
+    t.c_iflag = BRKINT | IGNPAR | ICRNL | IXON | IMAXBEL;
+    t.c_oflag = OPOST | ONLCR;
+    t.c_cflag = CREAD | CS8 | B38400;
+    t.c_lflag = ISIG | ICANON 
+                | ECHO | ECHOE | ECHOK 
+                //| ECHOKE 
+                //| ECHOCTL | ECHOKE 
+                | IEXTEN;
+
+    int fd = open("/dev/tty", O_RDWR);
+
+    tcsetattr(fd, TCSANOW, &t);
+    //system("tset");
+}
 
 impl ViWin version 14
 {
@@ -23,6 +67,64 @@ initialize(int y, int x, int width, int height, Vi* vi) {
     self.recordingMacro = null;
     
     self.runningMacro = null;
+    
+    (void)self.loadDotFromFile(vi);
+}
+
+bool saveDotToFile(ViWin* self, Vi* nvi)
+{
+    char* home = getenv("HOME");
+    if(home == null) {
+        return false;
+    }
+
+    string path = xsprintf("%s/.wi/dot.txt", home);
+    FILE* f = fopen(path, "w");
+
+    if(f == null) {
+        return false;
+    }
+    
+    self.savedInputedKeys.each {
+        if(fputc(it, f) < 0) {
+            *it3 = true;
+            return;
+        }
+    }
+
+    fclose(f);
+
+    return true;
+}
+
+bool loadDotFromFile(ViWin* self, Vi* nvi)
+{
+    char* home = getenv("HOME");
+    if(home == null) {
+        return false;
+    }
+
+    string path = xsprintf("%s/.wi/dot.txt", home);
+    FILE* f = fopen(path, "r");
+
+    if(f == null) {
+        return false;
+    }
+
+    self.savedInputedKeys = new vector<int>.initialize();
+    
+    while(true) {
+        char c;
+        if(fread(&c, sizeof(char), 1, f) == 0) {
+            break;
+        }
+
+        self.savedInputedKeys.push_back(c);
+    }
+
+    fclose(f);
+
+    return true;
 }
 
 int getKey(ViWin* self, bool head) {
@@ -90,7 +192,14 @@ int getKey(ViWin* self, bool head) {
         
         int key = wgetch(self.win);
         
-        if(head && key >= '1' && key <= '9' && ((Vi*)self.vi).mode != kInsertMode) {
+        if(key == 26) {
+            endwin();
+            mreset_tty();
+            kill(getpid(), SIGSTOP);
+            Vi* vi = self.vi;
+            vi.init_curses();
+        }
+        else if(head && key >= '1' && key <= '9' && ((Vi*)self.vi).mode != kInsertMode) {
             int num = key - '0';
             
             key = wgetch(self.win);
@@ -205,10 +314,9 @@ void runMacro(ViWin* self) {
 
 impl Vi version 14
 {
-    
 initialize() {
     inherit(self);
-
+    
     self.events.replace('.', lambda(Vi* self, int key) 
     {
         self.activeWin.autoInput = true;

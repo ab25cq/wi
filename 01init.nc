@@ -1,5 +1,27 @@
 #include "common.h"
 
+bool xiswalpha(wchar_t* c)
+{
+    bool result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    return result;
+}
+
+bool xiswblank(wchar_t* c)
+{
+    return c == ' ' || c == '\t';
+}
+
+
+bool xiswalnum(wchar_t* c)
+{
+    return xiswalpha(c) || xiswdigit(c);
+}
+
+bool xiswdigit(wchar_t* c)
+{
+    return (c >= '0' && c <= '9');
+}
+
 int xgetmaxx(){
     var ws = new winsize;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, ws);
@@ -25,7 +47,7 @@ int xgetmaxy(){
 Raspberry PI return -1
 */
     if(result == -1) {
-        return getmaxx(stdscr);
+        return getmaxy(stdscr);
     }
     else {
         return result;

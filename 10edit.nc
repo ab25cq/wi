@@ -1,43 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ncurses.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <limits.h>
-#include <wctype.h>
-
 #include "common.h"
 
 impl ViWin version 10
 {
+initialize(int y, int x, int width, int height, Vi* vi)
+{
+    inherit(self, y, x, width, height, vi);
+    
+    self.mRepeatFowardNextCharacterKind = kRFNCNone;
+    self.mRepeatFowardNextCharacter = 0;
+}
+
 void modifyCursorOnDeleting(ViWin* self) {
-    self.modifyOverCursorYValue();
-    self.modifyOverCursorXValue();
-}
-
-void modifyOverCursorXValue2(ViWin* self){
-    if(self.texts.length() == 0) {
-        self.scroll = 0;
-        self.cursorY = 0;
-        self.cursorX = 0;
-    }
-    else {
-        var cursor_line = self.texts.item(self.scroll+self.cursorY, null);
-
-        if(cursor_line) {
-            if(self.cursorX >= cursor_line.length())
-            {
-                self.cursorX = cursor_line.length();
-
-                if(self.cursorX < 0) {
-                    self.cursorX = 0;
-                }
-            }
-        }
-    }
-}
-
-void modifyCursorOnDeleting2(ViWin* self) {
     self.modifyOverCursorYValue();
     self.modifyOverCursorXValue2();
 }
@@ -61,6 +34,7 @@ void deleteOneLine(ViWin* self, Vi* nvi) {
             }
         }
         
+        self.saveYankToFile(nvi);
         self.digitInput = 0;
     }
     else {
@@ -70,6 +44,7 @@ void deleteOneLine(ViWin* self, Vi* nvi) {
             nvi.yank.reset();
             nvi.yank.push_back(clone line);
             nvi.yankKind = kYankKindLine;
+            self.saveYankToFile(nvi);
             self.texts.delete(self.scroll+self.cursorY);
     
             self.modifyCursorOnDeleting();
@@ -97,6 +72,7 @@ void deleteOneLine2(ViWin* self, Vi* nvi) {
         }
         
         self.digitInput = 0;
+        self.saveYankToFile(nvi);
     }
     else {
         var line = self.texts.item(self.scroll+self.cursorY, null);
@@ -153,8 +129,8 @@ void deleteWord(ViWin* self, Vi* nvi) {
                         }
                     }
                 }
-                else if(iswalpha(*p)) {
-                    while(iswalpha(*p)) {
+                else if(xiswalpha(*p)) {
+                    while(xiswalpha(*p)) {
                         p++;
                         x++;
         
@@ -164,8 +140,8 @@ void deleteWord(ViWin* self, Vi* nvi) {
                         }
                     }
                 }
-                else if(iswblank(*p)) {
-                    while(iswblank(*p)) {
+                else if(xiswblank(*p)) {
+                    while(xiswblank(*p)) {
                         p++;
                         x++;
         
@@ -175,8 +151,8 @@ void deleteWord(ViWin* self, Vi* nvi) {
                         }
                     }
                 }
-                else if(iswdigit(*p)) {
-                    while(iswdigit(*p)) {
+                else if(xiswdigit(*p)) {
+                    while(xiswdigit(*p)) {
                         p++;
                         x++;
         
@@ -188,12 +164,13 @@ void deleteWord(ViWin* self, Vi* nvi) {
                 }
             }
     
-//            nvi.yank.reset();
-//            nvi.yank.push_back(line.substring(self.cursorX, x));
-//            nvi.yankKind = kYankKindNoLine;
+            nvi.yank.reset();
+            nvi.yank.push_back(line.substring(self.cursorX, x));
+            nvi.yankKind = kYankKindNoLine;
+            self.saveYankToFile(nvi);
             line.delete_range(self.cursorX, x);
     
-            self.modifyCursorOnDeleting2();
+            self.modifyCursorOnDeleting();
         }
         
         self.digitInput = 0;
@@ -235,8 +212,8 @@ void deleteWord(ViWin* self, Vi* nvi) {
                     }
                 }
             }
-            else if(iswalpha(*p)) {
-                while(iswalpha(*p)) {
+            else if(xiswalpha(*p)) {
+                while(xiswalpha(*p)) {
                     p++;
                     x++;
     
@@ -246,8 +223,8 @@ void deleteWord(ViWin* self, Vi* nvi) {
                     }
                 }
             }
-            else if(iswblank(*p)) {
-                while(iswblank(*p)) {
+            else if(xiswblank(*p)) {
+                while(xiswblank(*p)) {
                     p++;
                     x++;
     
@@ -257,8 +234,8 @@ void deleteWord(ViWin* self, Vi* nvi) {
                     }
                 }
             }
-            else if(iswdigit(*p)) {
-                while(iswdigit(*p)) {
+            else if(xiswdigit(*p)) {
+                while(xiswdigit(*p)) {
                     p++;
                     x++;
     
@@ -269,12 +246,13 @@ void deleteWord(ViWin* self, Vi* nvi) {
                 }
             }
     
-//            nvi.yank.reset();
-//            nvi.yank.push_back(line.substring(self.cursorX, x));
-//            nvi.yankKind = kYankKindNoLine;
+            nvi.yank.reset();
+            nvi.yank.push_back(line.substring(self.cursorX, x));
+            nvi.yankKind = kYankKindNoLine;
+            self.saveYankToFile(nvi);
             line.delete_range(self.cursorX, x);
     
-            self.modifyCursorOnDeleting2();
+            self.modifyCursorOnDeleting();
         }
     }
 }
@@ -437,6 +415,128 @@ void deleteCursorCharactor(ViWin* self) {
     }
 }
 
+void deleteBack(ViWin* self) {
+    self.pushUndo();
+    
+    if(self.digitInput > 0) {
+        int num = self.digitInput + 1;
+        
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        for(int i= 0; i<num; i++) {
+            if(self.cursorX > 0) {
+                self.cursorX--;
+                line.delete(self.cursorX);
+            }
+        }
+    
+        self.modifyOverCursorXValue();
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        if(self.cursorX > 0) {
+            self.cursorX--;
+            line.delete(self.cursorX);
+        }
+    
+        self.modifyOverCursorXValue();
+    }
+}
+
+void getCursorNumber(ViWin* self, int* head, int* tail) {
+    var line = self.texts.item(self.scroll+self.cursorY, null);
+    
+    var c = line.item(self.cursorX, null); 
+    
+    if(xiswdigit(c)) {
+        /// back ///
+        *head = self.cursorX;
+        
+        while(true) {
+            var c = line.item(*head, null);
+            
+            if(xiswdigit(c)) {
+                (*head)--;
+            }
+            else {
+                (*head)++;
+                break;
+            }
+        };
+        
+        *tail = self.cursorX;
+        
+        while(true) {
+            var c = line.item(*tail, null);
+            
+            if(xiswdigit(c)) {
+                (*tail)++;
+            }
+            else {
+                break;
+            }
+        }
+    }
+    else {
+        *head = -1;
+        *tail = -1;
+    }
+}
+
+void incrementNumber(ViWin* self) {
+    self.pushUndo();
+    
+    if(self.digitInput > 0) {
+        int num = self.digitInput + 1;
+        
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        int head;
+        int tail;
+        self.getCursorNumber(&head, &tail);
+        
+        if(head != -1 && tail != -1) {
+            string number_string = line.substring(head, tail).to_string("");
+            
+            int n = atoi(number_string);
+            
+            n += num;
+            
+            wstring new_line = line.substring(0, head) + xsprintf("%d", n).to_wstring() + line.substring(tail, -1);
+            
+            self.texts.replace(self.scroll+self.cursorY, new_line);
+        }
+    
+        self.modifyOverCursorXValue();
+        
+        self.digitInput = 0;
+    }
+    else {
+        var line = self.texts.item(self.scroll+self.cursorY, null);
+        
+        int head;
+        int tail;
+        self.getCursorNumber(&head, &tail);
+        
+        if(head != -1 && tail != -1) {
+            string number_string = line.substring(head, tail).to_string("");
+            
+            int n = atoi(number_string);
+            
+            n++;
+            
+            wstring new_line = line.substring(0, head) + xsprintf("%d", n).to_wstring() + line.substring(tail, -1);
+            
+            self.texts.replace(self.scroll+self.cursorY, new_line);
+        }
+
+        self.modifyOverCursorXValue();
+    }
+}
+
 void replaceCursorCharactor(ViWin* self) {
     self.pushUndo();
     
@@ -523,6 +623,7 @@ void yankOneLine(ViWin* self, Vi* nvi) {
         }
         
         self.digitInput = 0;
+        self.saveYankToFile(nvi);
     }
     else {
         var line = self.texts.item(self.scroll+self.cursorY, null);
@@ -531,6 +632,7 @@ void yankOneLine(ViWin* self, Vi* nvi) {
             nvi.yank.reset();
             nvi.yank.push_back(clone line);
             nvi.yankKind = kYankKindLine;
+            self.saveYankToFile(nvi);
         }
     }
 }
@@ -549,8 +651,9 @@ void joinLines2(ViWin* self) {
     self.modifyOverCursorXValue();
 }
 
-void forwardToNextCharacter1(ViWin* self) {
-    var key = self.getKey(false);
+void forwardToNextCharacter1(ViWin* self, int key) {
+    self.mRepeatFowardNextCharacterKind = kRFNC1;
+    self.mRepeatFowardNextCharacter = key;
     
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
@@ -577,8 +680,9 @@ void forwardToNextCharacter1(ViWin* self) {
     }
 }
 
-void forwardToNextCharacter2(ViWin* self) {
-    var key = self.getKey(false);
+void forwardToNextCharacter2(ViWin* self, int key) {
+    self.mRepeatFowardNextCharacterKind = kRFNC2;
+    self.mRepeatFowardNextCharacter = key;
     
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
@@ -602,6 +706,19 @@ void forwardToNextCharacter2(ViWin* self) {
         if(cursor_x != -1) {
             self.cursorX += cursor_x;
         }
+    }
+}
+
+void repeatForwardNextCharacter(ViWin* self) {
+    switch(self.mRepeatFowardNextCharacterKind) {
+        case kRFNC1:
+            self.forwardToNextCharacter1(self.mRepeatFowardNextCharacter);
+            break;
+            
+        case kRFNC2:
+            self.cursorX++;
+            self.forwardToNextCharacter2(self.mRepeatFowardNextCharacter);
+            break;
     }
 }
 
@@ -707,83 +824,6 @@ void changeCase(ViWin* self) {
     }
 }
 
-void incrementDigit(ViWin* self) {
-    self.pushUndo();
-
-    var line = self.texts.item(self.scroll+self.cursorY, null);
-    
-    if(self.digitInput > 0) {
-        wchar_t c = line.item(self.cursorX, -1);
-        
-        if(c != -1) {
-            if(c >= '0' && c <= '9') {
-                int head = self.cursorX;
-                while(c >= '0' && c <= '9') {
-                    c = line.item(head, -1);
-                    head--;
-                }
-                head++;
-                
-                c = line.item(self.cursorX, -1);
-                
-                int tail = self.cursorX;
-                while(c >= '0' && c <= '9') {
-                    c = line.item(tail, -1);
-                    tail++;
-                }
-                
-                string digits = line.substring(head, tail).to_string("");
-                
-                int value = atoi(digits);
-                
-                value += self.digitInput + 1;
-                
-                var line2 = line.substring(0, head+1) + xsprintf("%d", value).to_wstring() + line.substring(tail, -1);
-                
-                self.texts.replace(self.scroll+self.cursorY, line2);
-            }
-        }
-        
-        self.digitInput = 0;
-    }
-    else {
-        wchar_t c = line.item(self.cursorX, -1);
-        
-        if(c != -1) {
-            if(c >= '0' && c <= '9') {
-                int head = self.cursorX;
-                while(c >= '0' && c <= '9') {
-                    head--;
-                    c = line.item(head, -1);
-                }
-                head++;
-                
-                if(head < 0) {
-                    head = 0;
-                }
-                
-                c = line.item(self.cursorX, -1);
-                
-                int tail = self.cursorX;
-                while(c >= '0' && c <= '9') {
-                    tail++;
-                    c = line.item(tail, -1);
-                }
-                
-                string digits = line.substring(head, tail).to_string("");
-                
-                int value = atoi(digits);
-                
-                value ++;
-                
-                var line2 = line.substring(0, head) + xsprintf("%d", value).to_wstring() + line.substring(tail, -1);
-                
-                self.texts.replace(self.scroll+self.cursorY, line2);
-            }
-        }
-    }
-}
-
 void moveToHead(ViWin* self) {
     var line = self.texts.item(self.scroll+self.cursorY, null);
     
@@ -794,183 +834,4 @@ void moveToHead(ViWin* self) {
     }
 }
 
-}
-
-impl Vi version 10
-{
-initialize() {
-    inherit(self);
-
-    self.events.replace('d', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey(true);
-
-        switch(key2) {
-            case 'd':
-                self.activeWin.deleteOneLine(self);
-                self.activeWin.writed = true;
-                break;
-            
-            case 'w':
-            case 'e':
-                self.activeWin.deleteWord(self);
-                self.activeWin.writed = true;
-                break;
-            
-            case 'f':
-                self.activeWin.deleteForNextCharacter();
-                self.activeWin.writed = true;
-                break;
-                
-            case 't':
-                self.activeWin.deleteForNextCharacter2();
-                self.activeWin.writed = true;
-                break;
-                
-            case '$':
-                self.activeWin.deleteUntilTail();
-                self.activeWin.writed = true;
-                break;
-        }
-
-        self.activeWin.saveInputedKey();
-    });
-
-    self.events.replace('c', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey(true);
-
-        switch(key2) {
-            case '$':
-                self.activeWin.deleteUntilTail();
-                self.enterInsertMode();
-                if(self.activeWin.texts.length() != 0) {
-                    self.activeWin.cursorX++;
-                }
-                self.activeWin.writed = true;
-                break;
-                
-            case 'c':
-                self.activeWin.deleteOneLine2(self);
-                self.enterInsertMode();
-                if(self.activeWin.texts.length() != 0) {
-                    self.activeWin.cursorX = 0;
-                }
-                self.activeWin.writed = true;
-                break;
-                
-                
-            case 'w':
-            case 'e': {
-                self.activeWin.deleteWord(self);
-                self.enterInsertMode2();
-                self.activeWin.writed = true;
-                }
-                break;
-                
-            case 't':
-                self.activeWin.deleteForNextCharacter2();
-                self.enterInsertMode();
-                self.activeWin.writed = true;
-                break;
-                
-            case 'f':
-                self.activeWin.deleteForNextCharacter();
-                self.enterInsertMode();
-                self.activeWin.writed = true;
-                break;
-        }
-    });
-    self.events.replace('y', lambda(Vi* self, int key) {
-        var key2 = self.activeWin.getKey(true);
-
-        switch(key2) {
-            case 'y':
-                self.activeWin.yankOneLine(self);
-                break;
-        }
-    });
-    self.events.replace('Y', lambda(Vi* self, int key) {
-        self.activeWin.yankOneLine(self);
-    });
-    self.events.replace('D', lambda(Vi* self, int key) {
-        self.activeWin.deleteUntilTail();
-        self.activeWin.writed = true;
-
-        self.activeWin.saveInputedKey();
-    });
-
-    self.events.replace('C', lambda(Vi* self, int key) {
-        self.activeWin.deleteUntilTail();
-        self.enterInsertMode();
-        if(self.activeWin.texts.length() != 0) {
-            self.activeWin.cursorX++;
-        }
-        self.activeWin.writed = true;
-    });
-    self.events.replace('x', lambda(Vi* self, int key) {
-        self.activeWin.deleteCursorCharactor();
-        self.activeWin.writed = true;
-
-        self.activeWin.saveInputedKey();
-    });
-    self.events.replace('r', lambda(Vi* self, int key) {
-        self.activeWin.replaceCursorCharactor();
-        self.activeWin.writed = true;
-
-        self.activeWin.saveInputedKey();
-    });
-    self.events.replace('J', lambda(Vi* self, int key) {
-        self.activeWin.joinLines();
-        self.activeWin.writed = true;
-
-        self.activeWin.saveInputedKey();
-    });
-    self.events.replace('~', lambda(Vi* self, int key) {
-        self.activeWin.changeCase();
-
-        self.activeWin.saveInputedKey();
-    });
-    self.events.replace('f', lambda(Vi* self, int key) {
-        self.activeWin.forwardToNextCharacter1();
-
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('t', lambda(Vi* self, int key) {
-        self.activeWin.forwardToNextCharacter2();
-
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('F', lambda(Vi* self, int key) {
-        self.activeWin.backwardToNextCharacter1();
-
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('T', lambda(Vi* self, int key) {
-        self.activeWin.backwardToNextCharacter2();
-
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('^', lambda(Vi* self, int key) {
-        self.activeWin.moveToHead();
-
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('+', lambda(Vi* self, int key) 
-    {
-        self.activeWin.nextLine();
-        self.activeWin.moveToHead();
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('-', lambda(Vi* self, int key) 
-    {
-        self.activeWin.prevLine();
-        self.activeWin.moveToHead();
-        self.activeWin.saveInputedKeyOnTheMovingCursor();
-    });
-    self.events.replace('A'-'A'+1, lambda(Vi* self, int key) 
-    {
-        self.activeWin.incrementDigit();
-
-        self.activeWin.saveInputedKey();
-    });
-}
 }

@@ -31,11 +31,11 @@ void textsView(ViWin* self, Vi* nvi)
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
 
-    var cursor_line = self.texts.item(self.scroll + self.cursorY, null).printable();
-        
-    int cursor_height = (wcswidth(cursor_line, cursor_line.length()) / (maxx-1));
-
     if(self.texts.length() > 0) {
+        var cursor_line = self.texts.item(self.scroll + self.cursorY, null).printable();
+            
+        int cursor_height = (wcswidth(cursor_line, cursor_line.length()) / (maxx-1));
+
         self.texts
             .sublist(self.scroll, self.scroll+maxy-1)
             .each 
@@ -53,7 +53,8 @@ void textsView(ViWin* self, Vi* nvi)
                     mvwprintw(self.win, it2, 0, "$");
                     wattroff(self.win, A_REVERSE);
                 }
-                else if(printable_line.length() > maxx-1) {
+                else if(wcswidth(printable_line, wcslen(printable_line)) > maxx-2)
+                {
                     int x = 0;
                     int cursor_y = it2;
                     int cursor_x = 0;
@@ -75,15 +76,22 @@ void textsView(ViWin* self, Vi* nvi)
                         x++;
                         cursor_x += wcswidth(c, c.length());
                         terminal_width += wcswidth(c, c.length());
-
-                        if(terminal_width >= maxx-1) {
+                        
+                        if(terminal_width >= maxx-2) {
                             cursor_x = 0;
                             terminal_width = 0;
                             cursor_y++;
                             wprintw(self.win, "~");
                         }
                     }
-                    wprintw(self.win, "$");
+                    if(self.cursorX == it.length()) {
+                        wattron(self.win, A_REVERSE);
+                        wprintw(self.win, "$");
+                        wattroff(self.win, A_REVERSE);
+                    }
+                    else {
+                        wprintw(self.win, "$");
+                    }
                 }
                 else {
                     int cursor_x = self.cursorX;
@@ -115,12 +123,34 @@ void textsView(ViWin* self, Vi* nvi)
                     wstring printable_tail_string = tail_string.printable();
 
                     mvwprintw(self.win, it2, x, "%ls", printable_tail_string);
-                    wprintw(self.win, "$");
+                    
+                    if(self.cursorX == it.length()) {
+                        wattron(self.win, A_REVERSE);
+                        wprintw(self.win, "$");
+                        wattroff(self.win, A_REVERSE);
+                    }
+                    else {
+                        wprintw(self.win, "$");
+                    }
                 }
             }
             else {
-                mvwprintw(self.win, it2, 0, "%ls", printable_line.substring(0, maxx-1));
-                wprintw(self.win, "$");
+                if(wcswidth(printable_line, wcslen(printable_line)) > maxx-2)
+                {
+                    int x = 0;
+                    int visible_x = 0;
+                    while(visible_x < maxx-2 && x < printable_line.length()) {
+                        wstring c = printable_line.substring(x, x+1);
+                        mvwprintw(self.win, it2, visible_x, "%ls", c);
+                        
+                        visible_x += wcswidth(c, wcslen(c));
+                        x++;
+                    }
+                    wprintw(self.win, "~");
+                }
+                else {
+                    mvwprintw(self.win, it2, 0, "%ls$", printable_line);
+                }
             }
         }
     }
@@ -131,12 +161,20 @@ void statusBarView(ViWin* self, Vi* nvi)
     int maxx = getmaxx(self.win);
 
     wattron(self.win, A_REVERSE);
+    string search_mode = string("");
+    if(nvi.searchReverse) {
+        search_mode = string("?");
+    }
+    else {
+        search_mode = string("/");
+    }
     mvwprintw(self.win, maxy-1, 0
-        , "%s x %d line %d (y %d scroll %d) changed %d search %ls"
+        , "%s x %d line %d (y %d scroll %d) changed %d search %s%ls"
         , xbasename(self.fileName)
         , self.cursorX, self.cursorY + self.scroll + 1
         , self.cursorY, self.scroll
         , self.writed
+        , search_mode
         , nvi.searchString);
     wattroff(self.win, A_REVERSE);
 
@@ -836,6 +874,109 @@ string commandBox(Vi* self, string command, string default_value) {
     
     self.extraWin = NULL;
     return command;
+}
+
+string selector(ViWin* self, list<string>* lines) {
+    bool end_of_select = false;
+    bool canceled = false;
+
+    int maxx = getmaxx(self.win);
+    int maxy = getmaxy(self.win);
+
+    int scrolltop = 0;
+    int cursor = 0;
+
+    while(!end_of_select) {
+        clear();
+        int maxy2 = lines.length() - scrolltop;
+
+        ### view ###
+        for(int y=0; y<maxy && y < maxy2; y++) {
+            var it = lines.item(scrolltop+y, null);
+
+            var line = it.substring(0, maxx-1);
+
+            if(cursor == y) {
+                attron(A_REVERSE);
+                mvprintw(y, 0, "%s", line);
+                attroff(A_REVERSE);
+            }
+            else {
+                mvprintw(y, 0, "%s", line);
+            }
+        }
+        refresh();
+
+        ### input ###
+        var key = getch();
+
+        switch(key) {
+            case KEY_UP:
+            case 'k':
+            case 'P'-'A'+1:
+                cursor--;
+                break;
+
+            case KEY_DOWN:
+            case 'j':
+            case 'N'-'A'+1:
+            case (('I'-'A')+1):
+                cursor++;
+                break;
+
+            case 'D'-'A'+1:
+                cursor+=10;
+                break;
+           
+            case (('U'-'A')+1):
+                cursor-=10;
+                break;
+
+            case ('C'-'A')+1:
+            case 'q':
+            case ('['-'A')+1:
+                canceled = true;
+                end_of_select = true;
+                break;
+
+            case KEY_ENTER:
+            case ('J'-'A')+1:
+                end_of_select = true;
+                break;
+        }
+        
+        ### modification ###
+        if(cursor < 0) {
+            int scroll_size = -cursor +1;
+            
+            cursor = 0;
+            scrolltop-=scroll_size;
+
+            if(scrolltop < 0) {
+                scrolltop = 0;
+                cursor = 0;
+            }
+        }
+
+        if(maxy2 < maxy) {
+            if(cursor >= maxy2) {
+                cursor = maxy2 - 1;
+            }
+        }
+        else {
+            if(cursor >= maxy) {
+                int scroll_size = cursor - maxy + 1;
+
+                scrolltop += scroll_size;
+                cursor -= scroll_size;
+            }
+        }
+    }
+
+    if(canceled) {
+        return string("");
+    }
+    return string(lines.item(scrolltop+cursor, string("")));
 }
 
 string inputBox(Vi* self, string default_value) {

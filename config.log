@@ -276,11 +276,11 @@ configure:3594: result: no
 configure:3651: checking CPU type
 configure:3722: checking Operating System
 configure:3758: checking for main in -ldl
-configure:3777: gcc -o conftest  -O2   conftest.c -ldl   >&5
+configure:3777: gcc -o conftest -I. -O2   conftest.c -ldl   >&5
 configure:3777: $? = 0
 configure:3786: result: yes
 configure:3797: checking math.h usability
-configure:3797: gcc -c  -O2  conftest.c >&5
+configure:3797: gcc -c -I. -O2  conftest.c >&5
 configure:3797: $? = 0
 configure:3797: result: yes
 configure:3797: checking math.h presence
@@ -290,11 +290,11 @@ configure:3797: result: yes
 configure:3797: checking for math.h
 configure:3797: result: yes
 configure:3804: checking for main in -lm
-configure:3823: gcc -o conftest  -O2   conftest.c -lm   -ldl >&5
+configure:3823: gcc -o conftest -I. -O2   conftest.c -lm   -ldl >&5
 configure:3823: $? = 0
 configure:3832: result: yes
 configure:3839: checking iconv.h usability
-configure:3839: gcc -c  -O2  conftest.c >&5
+configure:3839: gcc -c -I. -O2  conftest.c >&5
 configure:3839: $? = 0
 configure:3839: result: yes
 configure:3839: checking iconv.h presence
@@ -303,65 +303,79 @@ configure:3839: $? = 0
 configure:3839: result: yes
 configure:3839: checking for iconv.h
 configure:3839: result: yes
-configure:3852: checking pcre.h usability
-configure:3852: gcc -c  -O2  conftest.c >&5
-configure:3852: $? = 0
-configure:3852: result: yes
-configure:3852: checking pcre.h presence
-configure:3852: gcc -E  conftest.c
-configure:3852: $? = 0
-configure:3852: result: yes
-configure:3852: checking for pcre.h
-configure:3852: result: yes
-configure:3859: checking for main in -lpcre
-configure:3878: gcc -o conftest  -O2   conftest.c -lpcre   -ldl -lm >&5
-configure:3878: $? = 0
-configure:3887: result: yes
-configure:3896: checking ncurses.h usability
-configure:3896: gcc -c  -O2  conftest.c >&5
-configure:3896: $? = 0
-configure:3896: result: yes
-configure:3896: checking ncurses.h presence
-configure:3896: gcc -E  conftest.c
-configure:3896: $? = 0
-configure:3896: result: yes
-configure:3896: checking for ncurses.h
-configure:3896: result: yes
-configure:3903: checking for main in -lncursesw
-configure:3922: gcc -o conftest  -O2   conftest.c -lncursesw   -ldl -lm -lpcre >&5
-configure:3922: $? = 0
-configure:3931: result: yes
-configure:3939: checking for main in -lrt
-configure:3958: gcc -o conftest  -O2   conftest.c -lrt   -ldl -lm -lpcre -lncursesw >&5
-configure:3958: $? = 0
-configure:3967: result: yes
-configure:3975: checking pthread.h usability
-configure:3975: gcc -c  -O2  conftest.c >&5
-configure:3975: $? = 0
-configure:3975: result: yes
-configure:3975: checking pthread.h presence
-configure:3975: gcc -E  conftest.c
-configure:3975: $? = 0
-configure:3975: result: yes
-configure:3975: checking for pthread.h
-configure:3975: result: yes
-configure:3982: checking for main in -lpthread
-configure:4001: gcc -o conftest  -O2   conftest.c -lpthread   -ldl -lm -lpcre -lncursesw -lrt >&5
-configure:4001: $? = 0
-configure:4010: result: yes
-configure:4039: checking for lchmod
-configure:4039: gcc -o conftest  -O2   conftest.c  -ldl -lm -lpcre -lncursesw -lrt -lpthread >&5
-conftest.c:54:1: error: unknown type name 'choke'
+configure:3847: checking pcre.h usability
+configure:3847: gcc -c -I. -O2  conftest.c >&5
+configure:3847: $? = 0
+configure:3847: result: yes
+configure:3847: checking pcre.h presence
+configure:3847: gcc -E  conftest.c
+configure:3847: $? = 0
+configure:3847: result: yes
+configure:3847: checking for pcre.h
+configure:3847: result: yes
+configure:3854: checking for main in -lpcre
+configure:3873: gcc -o conftest -I. -O2   conftest.c -lpcre   -ldl -lm >&5
+configure:3873: $? = 0
+configure:3882: result: yes
+configure:3936: checking ncurses.h usability
+configure:3936: gcc -c -I. -O2  conftest.c >&5
+configure:3936: $? = 0
+configure:3936: result: yes
+configure:3936: checking ncurses.h presence
+configure:3936: gcc -E  conftest.c
+configure:3936: $? = 0
+configure:3936: result: yes
+configure:3936: checking for ncurses.h
+configure:3936: result: yes
+configure:3943: checking for main in -lncursesw
+configure:3962: gcc -o conftest -I. -O2   conftest.c -lncursesw   -ldl -lm -lpcre >&5
+configure:3962: $? = 0
+configure:3971: result: yes
+configure:3979: checking readline/readline.h usability
+configure:3979: gcc -c -I. -O2  conftest.c >&5
+configure:3979: $? = 0
+configure:3979: result: yes
+configure:3979: checking readline/readline.h presence
+configure:3979: gcc -E  conftest.c
+configure:3979: $? = 0
+configure:3979: result: yes
+configure:3979: checking for readline/readline.h
+configure:3979: result: yes
+configure:3986: checking for main in -lreadline
+configure:4005: gcc -o conftest -I. -O2   conftest.c -lreadline   -ldl -lm -lpcre -lncursesw >&5
+configure:4005: $? = 0
+configure:4014: result: yes
+configure:4022: checking for main in -lrt
+configure:4041: gcc -o conftest -I. -O2   conftest.c -lrt   -ldl -lm -lpcre -lncursesw -lreadline >&5
+configure:4041: $? = 0
+configure:4050: result: yes
+configure:4058: checking pthread.h usability
+configure:4058: gcc -c -I. -O2  conftest.c >&5
+configure:4058: $? = 0
+configure:4058: result: yes
+configure:4058: checking pthread.h presence
+configure:4058: gcc -E  conftest.c
+configure:4058: $? = 0
+configure:4058: result: yes
+configure:4058: checking for pthread.h
+configure:4058: result: yes
+configure:4065: checking for main in -lpthread
+configure:4084: gcc -o conftest -I. -O2   conftest.c -lpthread   -ldl -lm -lpcre -lncursesw -lreadline -lrt >&5
+configure:4084: $? = 0
+configure:4093: result: yes
+configure:4122: checking for lchmod
+configure:4122: gcc -o conftest -I. -O2   conftest.c  -ldl -lm -lpcre -lncursesw -lreadline -lrt -lpthread >&5
+conftest.c:55:1: error: unknown type name 'choke'
  choke me
  ^~~~~
-conftest.c:54:9: error: expected ';' before 'int'
+conftest.c:55:9: error: expected ';' before 'int'
  choke me
          ^
          ;
-conftest.c:57:1:
+conftest.c:58:1:
  int
  ~~~      
-configure:4039: $? = 1
+configure:4122: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -386,6 +400,7 @@ configure: failed program was:
 | #define HAVE_ICONV_H 1
 | #define HAVE_PCRE_H 1
 | #define HAVE_NCURSESW_H 1
+| #define HAVE_READLINE_H 1
 | #define HAVE_PTHREAD_H 1
 | /* end confdefs.h.  */
 | /* Define lchmod to an innocuous variant, in case <limits.h> declares lchmod.
@@ -426,12 +441,12 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:4039: result: no
-configure:4050: checking for execvpe
-configure:4050: gcc -o conftest  -O2   conftest.c  -ldl -lm -lpcre -lncursesw -lrt -lpthread >&5
-configure:4050: $? = 0
-configure:4050: result: yes
-configure:4171: creating ./config.status
+configure:4122: result: no
+configure:4133: checking for execvpe
+configure:4133: gcc -o conftest -I. -O2   conftest.c  -ldl -lm -lpcre -lncursesw -lreadline -lrt -lpthread >&5
+configure:4133: $? = 0
+configure:4133: result: yes
+configure:4254: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -448,9 +463,8 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on clover-lang.org
 
-config.status:810: creating Makefile
-config.status:810: creating config.h
-config.status:985: config.h is unchanged
+config.status:811: creating Makefile
+config.status:811: creating config.h
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -485,6 +499,7 @@ ac_cv_header_memory_h=yes
 ac_cv_header_ncurses_h=yes
 ac_cv_header_pcre_h=yes
 ac_cv_header_pthread_h=yes
+ac_cv_header_readline_readline_h=yes
 ac_cv_header_stdc=yes
 ac_cv_header_stdint_h=yes
 ac_cv_header_stdlib_h=yes
@@ -503,6 +518,8 @@ ac_cv_lib_pcre=ac_cv_lib_pcre_main
 ac_cv_lib_pcre_main=yes
 ac_cv_lib_pthread=ac_cv_lib_pthread_main
 ac_cv_lib_pthread_main=yes
+ac_cv_lib_readline=ac_cv_lib_readline_main
+ac_cv_lib_readline_main=yes
 ac_cv_lib_rt=ac_cv_lib_rt_main
 ac_cv_lib_rt_main=yes
 ac_cv_objext=o
@@ -519,7 +536,7 @@ ac_cv_prog_cc_g=yes
 ## ----------------- ##
 
 CC='gcc'
-CFLAGS=' -O2'
+CFLAGS='-I. -O2'
 CPP='gcc -E'
 CPPFLAGS=''
 DEFS='-DHAVE_CONFIG_H'
@@ -535,7 +552,7 @@ INSTALL_PROGRAM='${INSTALL}'
 INSTALL_SCRIPT='${INSTALL}'
 LDFLAGS=''
 LIBOBJS=''
-LIBS=' -ldl -lm -lpcre -lncursesw -lrt -lpthread'
+LIBS=' -ldl -lm -lpcre -lncursesw -lreadline -lrt -lpthread'
 LTLIBOBJS=''
 NCC='neo-c'
 NCFLAGS=''
@@ -604,6 +621,7 @@ target_alias=''
 #define HAVE_ICONV_H 1
 #define HAVE_PCRE_H 1
 #define HAVE_NCURSESW_H 1
+#define HAVE_READLINE_H 1
 #define HAVE_PTHREAD_H 1
 #define HAVE_EXECVPE 1
 

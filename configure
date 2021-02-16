@@ -3743,7 +3743,7 @@ then
 else
     echo other
 
-    $as_echo "#define __32BIT_CPU__ 1" >>confdefs.h
+    $as_echo "#define __64BIT_CPU__ 1" >>confdefs.h
 
 fi
 
@@ -3756,7 +3756,7 @@ $as_echo_n "checking Operating System... " >&6; }
 #########################################
 # CFLAGS settings
 #########################################
-CFLAGS=""
+CFLAGS="-I."
 NCFLAGS=""
 if test $DEBUGGING = 1
 then
@@ -3875,11 +3875,6 @@ fi
 
 
 
-if test "$OS" = CYGWIN || test "$OS" = DARWIN || test "$OS" = FREEBSD
-then
-    LIBS="$LIBS -liconv"
-fi
-
 ac_fn_c_check_header_mongrel "$LINENO" "pcre.h" "ac_cv_header_pcre_h" "$ac_includes_default"
 if test "x$ac_cv_header_pcre_h" = xyes; then :
   $as_echo "#define HAVE_PCRE_H 1" >>confdefs.h
@@ -3924,14 +3919,59 @@ else
 fi
 ac_cv_lib_pcre=ac_cv_lib_pcre_main
 
-ac_fn_c_check_header_mongrel "$LINENO" "ncurses.h" "ac_cv_header_ncurses_h" "$ac_includes_default"
+
+if test `uname -s` = "Darwin"; then
+    ac_fn_c_check_header_mongrel "$LINENO" "ncurses.h" "ac_cv_header_ncurses_h" "$ac_includes_default"
 if test "x$ac_cv_header_ncurses_h" = xyes; then :
   $as_echo "#define HAVE_NCURSESW_H 1" >>confdefs.h
 
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lncursesw" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lncurses" >&5
+$as_echo_n "checking for main in -lncurses... " >&6; }
+if ${ac_cv_lib_ncurses_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lncurses  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ncurses_main=yes
+else
+  ac_cv_lib_ncurses_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ncurses_main" >&5
+$as_echo "$ac_cv_lib_ncurses_main" >&6; }
+if test "x$ac_cv_lib_ncurses_main" = xyes; then :
+   LIBS="$LIBS -lncurses";
+fi
+ac_cv_lib_ncurses=ac_cv_lib_ncurses_main
+
+else
+    ac_fn_c_check_header_mongrel "$LINENO" "ncurses.h" "ac_cv_header_ncurses_h" "$ac_includes_default"
+if test "x$ac_cv_header_ncurses_h" = xyes; then :
+  $as_echo "#define HAVE_NCURSESW_H 1" >>confdefs.h
+
+fi
+
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lncursesw" >&5
 $as_echo_n "checking for main in -lncursesw... " >&6; }
 if ${ac_cv_lib_ncursesw_main+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -3965,6 +4005,49 @@ if test "x$ac_cv_lib_ncursesw_main" = xyes; then :
    LIBS="$LIBS -lncursesw";
 fi
 ac_cv_lib_ncursesw=ac_cv_lib_ncursesw_main
+
+fi
+ac_fn_c_check_header_mongrel "$LINENO" "readline/readline.h" "ac_cv_header_readline_readline_h" "$ac_includes_default"
+if test "x$ac_cv_header_readline_readline_h" = xyes; then :
+  $as_echo "#define HAVE_READLINE_H 1" >>confdefs.h
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lreadline" >&5
+$as_echo_n "checking for main in -lreadline... " >&6; }
+if ${ac_cv_lib_readline_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lreadline  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_readline_main=yes
+else
+  ac_cv_lib_readline_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_readline_main" >&5
+$as_echo "$ac_cv_lib_readline_main" >&6; }
+if test "x$ac_cv_lib_readline_main" = xyes; then :
+   LIBS="$LIBS -lreadline";
+fi
+ac_cv_lib_readline=ac_cv_lib_readline_main
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lrt" >&5

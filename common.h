@@ -4,10 +4,16 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include "config.h"
+#include "../clover3/src/common.h"
 
 #define SAVE_INPUT_KEY_MAX 256
 
 // 1init.h
+bool xiswalpha(wchar_t* c);
+bool xiswalnum(wchar_t* c);
+bool xiswdigit(wchar_t* c);
+bool xiswblank(wchar_t* c);
+
 int xgetmaxx();
 int xgetmaxy();
 
@@ -68,7 +74,7 @@ impl ViWin version 2
     void modifyOverCursorYValue(ViWin* self);
     void modifyUnderCursorYValue(ViWin* self);
     void modifyOverCursorXValue(ViWin* self);
-    void modifyOverCursorXValueOnInsertMode(ViWin* self);
+    void modifyOverCursorXValue2(ViWin* self);
     void modifyUnderCursorXValue(ViWin* self);
 
     void forward(ViWin* self);
@@ -82,7 +88,6 @@ impl ViWin version 2
 
     void moveTop(ViWin* self);
     void keyG(ViWin* self,Vi* nvi);
-    void keyZ(ViWin* self, Vi* nvi);
     void moveBottom(ViWin* self);
 
     void repositionWindows(Vi* self);
@@ -94,7 +99,6 @@ impl ViWin version 2
     void restoreVisualMode(ViWin* self, Vi* nvi);
     
     void joinLines2(ViWin* self);
-    void topCursor(ViWin* self);
 }
 
 struct Vi version 2 
@@ -119,7 +123,7 @@ impl Vi version 2
     void view(Vi* self);
     void clearView(Vi* self);
     void exitFromApp(Vi* self);
-    void enterSearchMode(Vi* self, bool regex_search, bool reverse_search);
+    void enterSearchMode(Vi* self, bool regex_search, bool search_reverse);
 }
 
 /// 3insert_mode.h ///
@@ -132,6 +136,10 @@ impl ViWin version 3
     void enterNewLine(ViWin* self);
     void enterNewLine2(ViWin* self);
     void input(ViWin* self, Vi* nvi);
+    void backSpace(ViWin* self);
+    void backIndent(ViWin* self);
+    void blinkBraceFoward(ViWin* self, wchar_t head, wchar_t tail, Vi* nvi);
+    void blinkBraceEnd(ViWin* self, wchar_t head, wchar_t tail, Vi* nvi);
 
     void pushUndo(ViWin* self);
     void writedFlagOn(ViWin* self);
@@ -222,6 +230,9 @@ struct Vi version 6
 impl Vi version 6
 {
     initialize();
+    void saveLastOpenFile(Vi* self, char* file_name);
+    string readLastOpenFile(Vi* self);
+    void repositionWindows(Vi* self);
     void openFile(Vi* self, char* file_name, int line_num);
     void openNewFile(Vi* self, char* file_name);
     void closeActiveWin(Vi* self);
@@ -235,6 +246,8 @@ impl ViWin version 7
 {
     void deleteLines(ViWin* self, int head, int tail, Vi* nvi);
     void deleteOneLine(ViWin* self, Vi* nvi);
+    bool saveYankToFile(ViWin* self, Vi* nvi);
+    bool loadYankFromFile(ViWin* self, Vi* nvi);
 }
 
 enum { kYankKindLine, kYankKindNoLine };
@@ -248,7 +261,6 @@ struct Vi version 7
 impl Vi version 7 
 {
     initialize();
-    finalize();
 }
 
 /// 8visual.h ///
@@ -258,6 +270,7 @@ enum eMode { kVisualMode = kInsertMode + 1 };
 struct ViWin version 8
 {
     int visualModeHead;
+    int visualModeHeadX;
     
     int visualModeHeadHorizonScroll;
     int visualModeHeadHorizonX;
@@ -296,8 +309,8 @@ enum eMode { kSearchMode = kVisualMode + 1 };
 struct Vi version 9
 {
     wstring searchString;
+    bool searchReverse;
     bool regexSearch;
-    bool reverseSearch;
 };
 
 impl ViWin version 9
@@ -314,19 +327,31 @@ impl ViWin version 9
 
 impl Vi version 9
 {
-    void enterSearchMode(Vi* self, bool regex_search, bool reverse_search);
+    void enterSearchMode(Vi* self, bool regex_search, bool search_reverse);
     void exitFromSearchMode(Vi* self);
 
     initialize();
     finalize();
 }
 
+enum eRepeatForwardNextCharacter {
+    kRFNCNone, kRFNC1, kRFNC2
+};
+
+struct ViWin version 10
+{
+    int mRepeatFowardNextCharacterKind;
+    wchar_t mRepeatFowardNextCharacter;
+};
+
 /// 10edit.h ///
 impl ViWin version 10
 {
+    initialize(int y, int x, int width, int height, Vi* vi);
     void deleteLines(ViWin* self, int head, int tail, Vi* nvi);
     void deleteOneLine(ViWin* self, Vi* nvi);
     void joinLines2(ViWin* self);
+    void deleteUntilTail(ViWin* self);
 }
 
 impl Vi version 10
@@ -351,7 +376,7 @@ enum eMode { kCommandMode = kSearchMode + 1 };
 struct Vi version 12
 {
     string commandString;
-};
+}
 
 impl ViWin version 12
 {
@@ -394,6 +419,10 @@ struct ViWin version 14
 impl ViWin version 14
 {
     initialize(int y, int x, int width, int height, Vi* vi);
+    
+    bool saveDotToFile(ViWin* self, Vi* nvi);
+    bool loadDotFromFile(ViWin* self, Vi* nvi);
+
     int getKey(ViWin* self, bool head);
     void clearInputedKey(ViWin* self);
     void saveInputedKey(ViWin* self);
@@ -426,6 +455,7 @@ impl ViFiler
 {
 initialize();
 finalize();
+void input(ViFiler* self, Vi* nvi);
 }
 
 struct Vi version 15
@@ -449,6 +479,7 @@ impl Vi version 15
     void clearView(Vi* self);
     string commandBox(Vi* self, string command, string default_value);
     string inputBox(Vi* self, string default_value);
+    string selector(ViWin* self, list<string>* lines);
     void extraView(Vi* self);
 }
 
@@ -522,4 +553,20 @@ impl Vi version 18
 {
 initialize();
 }
+
+enum eMode { kRewriteMode = kVerticalVisualMode + 1 };
+
+impl ViWin version 19 
+{
+void view(ViWin* self, Vi* nvi);
+void input(ViWin* self, Vi* nvi);
+}
+
+impl Vi version 19
+{
+initialize() ;
+int main_loop(Vi* self);
+}
+
+extern Vi* gApp;
 

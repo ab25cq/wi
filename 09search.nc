@@ -19,7 +19,7 @@ void searchModeView(ViWin* self, Vi* nvi)
     self.textsView(nvi);
 
     wattron(self.win, A_REVERSE);
-    if(nvi.reverseSearch) {
+    if(nvi.searchReverse) {
         mvwprintw(self.win, self.height-1, 0, "?%ls", nvi.searchString);
     }
     else {
@@ -161,8 +161,6 @@ void searchWordOnCursor(ViWin* self, Vi* nvi)
                 p++;
                 self.cursorX++;
             }
-
-            self.cursorX++;
         }
 
         var search_word = line.substring(word_head, self.cursorX);
@@ -170,12 +168,13 @@ void searchWordOnCursor(ViWin* self, Vi* nvi)
         
         self.cursorX = cursor_x_before;
 
+        nvi.searchReverse = false;
         self.search(nvi);
     }
 }
+
 void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
 {
-    nvi.reverseSearch = true;
     var line = self.texts.item(self.scroll+self.cursorY, wstring(""));
 
     if(self.cursorX < line.length()) {
@@ -209,14 +208,13 @@ void searchWordOnCursorReverse(ViWin* self, Vi* nvi)
                 p++;
                 self.cursorX++;
             }
-
-            self.cursorX++;
         }
 
         var search_word = line.substring(word_head, self.cursorX);
         nvi.searchString = clone search_word;
         
         self.cursorX = cursor_x_before;
+        nvi.searchReverse = true;
         self.searchReverse(nvi);
     }
 }
@@ -234,15 +232,32 @@ void inputSearchlMode(ViWin* self, Vi* nvi)
             nvi.exitFromSearchMode();
             break;
 
+        case 'W'-'A'+1: {
+            while(true) {
+                wchar_t c = nvi.searchString.item(-1, null)
+                
+                if(c == null) {
+                    break;
+                }
+                else if(xiswalnum(c)) {
+                    nvi.searchString.delete(-1);
+                }
+                else {
+                    break;
+                }
+            }
+            
+            }
+            break;
+
         case 10:
-            if(nvi.reverseSearch) {
+            if(nvi.searchReverse) {
                 self.searchReverse(nvi);
-                nvi.exitFromSearchMode();
             }
             else {
                 self.search(nvi);
-                nvi.exitFromSearchMode();
             }
+            nvi.exitFromSearchMode();
             break;
             
         case 8:
@@ -332,12 +347,13 @@ void readSearchString(Vi* self, char* file_name) {
     self.searchString = wstring(line);
 }
 
-void enterSearchMode(Vi* self, bool regex_search, bool reverse_search) {
+void enterSearchMode(Vi* self, bool regex_search, bool reverse) {
     self.mode = kSearchMode;
     self.searchString = wstring("");
     self.regexSearch = regex_search;
-    self.reverseSearch = reverse_search;
+    self.searchReverse = reverse;
 }
+
 void exitFromSearchMode(Vi* self) {
     self.mode = kEditMode;
 }
@@ -359,25 +375,23 @@ initialize() {
 
     self.events.replace('n', lambda(Vi* self, int key) 
     {
-        if(self.reverseSearch) {
+        if(self.searchReverse) {
             self.activeWin.searchReverse(self);
-            self.activeWin.saveInputedKeyOnTheMovingCursor();
         }
         else {
             self.activeWin.search(self);
-            self.activeWin.saveInputedKeyOnTheMovingCursor();
         }
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('N', lambda(Vi* self, int key) 
     {
-        if(self.reverseSearch) {
+        if(self.searchReverse) {
             self.activeWin.search(self);
-            self.activeWin.saveInputedKeyOnTheMovingCursor();
         }
         else {
             self.activeWin.searchReverse(self);
-            self.activeWin.saveInputedKeyOnTheMovingCursor();
         }
+        self.activeWin.saveInputedKeyOnTheMovingCursor();
     });
     self.events.replace('*', lambda(Vi* self, int key) 
     {
